@@ -12,6 +12,7 @@ class Supplement {
   final bool isMedication;
   final List<SupplementType> types;
   final List<SupplementForm> forms;
+  final bool isCustom;
 
   Supplement({
     String? id,
@@ -23,6 +24,7 @@ class Supplement {
     this.isMedication = false,
     this.types = const [],
     this.forms = const [],
+    this.isCustom = false,
   }) : id = id ?? const Uuid().v4();
 
   factory Supplement.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class Supplement {
       forms: (json['forms'] as List?)
           ?.map((form) => SupplementForm.fromJson(form))
           .toList() ?? [],
+      isCustom: json['isCustom'] ?? false,
     );
   }
 
@@ -54,6 +57,7 @@ class Supplement {
       'isMedication': isMedication,
       'types': types.map((type) => type.toJson()).toList(),
       'forms': forms.map((form) => form.toJson()).toList(),
+      'isCustom': isCustom,
     };
   }
 
@@ -66,6 +70,7 @@ class Supplement {
     bool? isMedication,
     List<SupplementType>? types,
     List<SupplementForm>? forms,
+    bool? isCustom,
   }) {
     return Supplement(
       id: id,
@@ -77,6 +82,7 @@ class Supplement {
       isMedication: isMedication ?? this.isMedication,
       types: types ?? this.types,
       forms: forms ?? this.forms,
+      isCustom: isCustom ?? this.isCustom,
     );
   }
 }

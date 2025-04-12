@@ -32,7 +32,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   void _loadData() {
     _reminders = MockData.getReminders(MockData.defaultUser.id);
-    _supplements = MockData.supplements;
+    _supplements = MockData.allSupplements;
   }
 
   List<DateTime> _getWeekDays() {
@@ -220,7 +220,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                           child: Column(
                             children: [
                               Text(
-                                DateFormat('E', 'uk').format(day)[0],
+                                DateFormat('uk').format(day)[0],
                                 style: theme.textTheme.bodyMedium,
                               ),
                               Text(

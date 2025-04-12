@@ -24,7 +24,7 @@ class _CourseScreenState extends State<CourseScreen> {
   void _loadData() {
     // In a real app, this would load from a repository
     _reminders = MockData.getReminders(MockData.defaultUser.id);
-    _supplements = MockData.supplements;
+    _supplements = MockData.allSupplements;
   }
 
   String _getSupplementName(String supplementId) {

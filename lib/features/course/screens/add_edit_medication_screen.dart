@@ -3,6 +3,7 @@ import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/models/supplement_form.dart';
 import 'package:vita_min_control_helper/data/repositories/mock_data.dart';
+import 'package:vita_min_control_helper/features/course/screens/add_custom_supplement_screen.dart';
 
 class AddEditMedicationScreen extends StatefulWidget {
   final Reminder? reminder;
@@ -30,7 +31,7 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
   @override
   void initState() {
     super.initState();
-    _supplements = MockData.supplements;
+    _supplements = MockData.allSupplements;
     _supplementForms = MockData.supplementForms;
 
     if (widget.reminder != null) {
@@ -84,6 +85,20 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
     }
   }
 
+  void _addCustomSupplement() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddCustomSupplementScreen()),
+    );
+    
+    if (result != null && result is Supplement) {
+      setState(() {
+        _supplements = MockData.allSupplements;
+        _selectedSupplementId = result.id;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.reminder != null;
@@ -98,29 +113,39 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
           padding: const EdgeInsets.all(16.0),
           children: [
             // Supplement dropdown
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Вітамін/Препарат',
-                border: OutlineInputBorder(),
-              ),
-              value: _selectedSupplementId,
-              items: _supplements.map((supplement) {
-                return DropdownMenuItem<String>(
-                  value: supplement.id,
-                  child: Text(supplement.name),
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                setState(() {
-                  _selectedSupplementId = value;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Будь ласка, оберіть вітамін/препарат';
-                }
-                return null;
-              },
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Вітамін/Препарат',
+                    border: OutlineInputBorder(),
+                  ),
+                  value: _selectedSupplementId,
+                  items: _supplements.map((supplement) {
+                    return DropdownMenuItem<String>(
+                      value: supplement.id,
+                      child: Text(supplement.name),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedSupplementId = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Будь ласка, оберіть вітамін/препарат';
+                    }
+                    return null;
+                  },
+                ),
+                TextButton.icon(
+                  onPressed: _addCustomSupplement,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Додати свій препарат'),
+                ),
+              ],
             ),
             
             const SizedBox(height: 16),

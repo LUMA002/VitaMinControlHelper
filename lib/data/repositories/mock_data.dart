@@ -236,7 +236,18 @@ class MockData {
     ];
   }
 
- /*  // Convert to JSON for storage
+  // Custom supplements
+  static final List<Supplement> _customSupplements = [];
+
+  static List<Supplement> get allSupplements {
+    return [...supplements, ..._customSupplements];
+  }
+
+  static void addCustomSupplement(Supplement supplement) {
+    _customSupplements.add(supplement);
+  }
+
+  /*  // Convert to JSON for storage
   static String getUserJson() {
     return jsonEncode(defaultUser.toJson());
   }
