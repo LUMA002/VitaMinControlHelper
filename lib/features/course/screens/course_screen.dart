@@ -53,19 +53,41 @@ class _CourseScreenState extends State<CourseScreen> {
     return '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}';
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
-    return _reminders.isEmpty
-        ? Center(
-            child: Text(
-              'У вас ще немає запланованих прийомів.\nНатисніть + щоб додати.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          )
-        : ListView.builder(
-            itemCount: _reminders.length,
-            itemBuilder: (context, index) {
+    return Scaffold(
+      body: _reminders.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'У вас ще немає запланованих прийомів.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddEditMedicationScreen(),
+                        ),
+                      ).then((_) => setState(() => _loadData()));
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Додати препарат'),
+                  ),
+                ],
+              ),
+            )
+          : Stack(
+              children: [
+                ListView.builder(
+                  //padding: const EdgeInsets.all(16),
+                  itemCount: _reminders.length,
+                  itemBuilder: (context, index) {
               final reminder = _reminders[index];
               return Card(
                 child: ListTile(
@@ -105,6 +127,24 @@ class _CourseScreenState extends State<CourseScreen> {
                 ),
               );
             },
-          );
+          ),
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddEditMedicationScreen(),
+                        ),
+                      ).then((_) => setState(() => _loadData()));
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+    );
   }
 }
