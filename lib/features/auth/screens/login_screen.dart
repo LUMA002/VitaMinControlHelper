@@ -75,12 +75,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Будь ласка, введіть email';
                     }
-                    
-                    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                    final emailRegex = RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    );
                     if (!emailRegex.hasMatch(value)) {
                       return 'Введіть коректний email';
                     }
-                    
+
                     return null;
                   },
                 ),
@@ -95,7 +97,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                       onPressed: () {
                         setState(() {
@@ -125,24 +129,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Login button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _login,
-                  child: _isLoading 
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Увійти'),
+                  child:
+                      _isLoading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Text('Увійти'),
                 ),
 
                 const SizedBox(height: 16),
 
                 // Register link
                 TextButton(
-                  onPressed: _isLoading 
-                    ? null 
-                    : () {
-                        context.go('/register');
-                      },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            context.go('/register');
+                          },
                   child: const Text('Створити новий акаунт'),
                 ),
 
@@ -150,12 +156,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 // Continue as guest
                 OutlinedButton(
-                  onPressed: _isLoading 
-                    ? null 
-                    : () {
-                        ref.read(authProvider.notifier).setGuestMode(true);
-                        context.go('/home');
-                      },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            ref.read(authProvider.notifier).setGuestMode(true);
+                            context.go('/home');
+                          },
                   child: const Text('Продовжити як гість'),
                 ),
               ],
@@ -171,14 +178,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      
+
       // Simulate login delay
       Future.delayed(const Duration(seconds: 1), () {
         // For testing purposes, let's check for a demo account
         final email = _emailController.text;
         final password = _passwordController.text;
-        
-        if (email == 'test@example.com' && password == 'password123') {
+
+        if (mounted &&
+            email == 'test@example.com' &&
+            password == 'password123') {
           ref.read(authProvider.notifier).setLoggedIn(true);
           ref.read(authProvider.notifier).setGuestMode(false);
           context.go('/home');
@@ -192,7 +201,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             );
           }
         }
-        
+
         setState(() {
           _isLoading = false;
         });

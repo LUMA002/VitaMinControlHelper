@@ -79,7 +79,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  void _showAddSingleIntakeDialog() {
+  /* void _showAddSingleIntakeDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -132,7 +132,7 @@ class _HomeTabState extends State<HomeTab> {
         ],
       ),
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {

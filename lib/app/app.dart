@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/app/theme.dart';
 import 'package:vita_min_control_helper/config/routes.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';  
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -16,6 +17,13 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       routerConfig: router,
+      locale: const Locale('uk', 'UA'), 
+      supportedLocales: const [Locale('uk')],// Ukrainian locale
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
     );
   }

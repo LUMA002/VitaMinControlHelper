@@ -6,6 +6,7 @@ import 'package:vita_min_control_helper/features/home/screens/home_tab.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
 import 'package:vita_min_control_helper/features/tracking/screens/tracking_screen.dart';
 import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_screen.dart';
+import 'package:vita_min_control_helper/shared/widgets/guest_mode_dialog.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Widget child;
@@ -62,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isHomeTab = widget.child is HomeTab;
+    //  final isHomeTab = widget.child is HomeTab;
     final isKnowledgeScreen = widget.child is KnowledgeScreen;
     final authState = ref.watch(authProvider);
 
@@ -102,15 +103,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           setState(() {
             if (isGuestMode && (index == 1 || index == 2)) {
-
-              // Показуємо діалогове вікно
-              showDialog(
+              GuestModeDialog.show(context); // Показуємо діалогове вікно
+             /*  showDialog(
                 context: context,
                 builder:
                     (context) => AlertDialog(
                       title: const Text('Обмежений доступ'),
                       content: const Text(
-                        'Ця функція доступна тільки авторизованим користувачам. '
+                        '!Ця функція доступна тільки авторизованим користувачам. '
                         'Будь ласка, увійдіть або зареєструйтесь, щоб отримати доступ.',
                       ),
                       actions: [
@@ -120,7 +120,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ],
                     ),
-              );
+              ); */
             } else {
               _currentIndex = index;
               switch (index) {
@@ -163,35 +163,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton:
-          isHomeTab
-              ? FloatingActionButton(
-                onPressed: () {
-                  // Show dialog to add one-time medication intake
-                  if (authState.isGuestMode) {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            title: const Text('Обмежений доступ'),
-                            content: const Text(
-                              'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                    );
-                  } else {
-                    // Add one-time intake logic here
-                  }
-                },
-                child: const Icon(Icons.add),
-              )
-              : null,
     );
   }
 }

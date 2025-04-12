@@ -236,7 +236,7 @@ class MockData {
     ];
   }
 
-  // Convert to JSON for storage
+ /*  // Convert to JSON for storage
   static String getUserJson() {
     return jsonEncode(defaultUser.toJson());
   }
@@ -259,5 +259,5 @@ class MockData {
 
   static String getIntakeLogsJson(String userId) {
     return jsonEncode(getIntakeLogs(userId).map((i) => i.toJson()).toList());
-  }
+  } */
 }
