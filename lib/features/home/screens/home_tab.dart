@@ -136,100 +136,91 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Сьогоднішні завдання'),
-      ),
-      body: _todayReminders.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'На сьогодні немає запланованих прийомів',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/course');
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Додати в курс'),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _todayReminders.length,
-              itemBuilder: (context, index) {
-                final reminder = _todayReminders[index];
-                final isCompleted = reminder.isConfirmed;
-                
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: isCompleted
-                              ? Colors.green.shade100
-                              : Theme.of(context).colorScheme.primaryContainer,
-                          child: Icon(
-                            isCompleted ? Icons.check : Icons.access_time,
-                            color: isCompleted
-                                ? Colors.green
-                                : Theme.of(context).colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                        title: Text(
-                          _getSupplementName(reminder.supplementId),
-                          style: TextStyle(
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                        subtitle: Text(
-                          reminder.timeToTake != null
-                              ? '${reminder.quantity} ${reminder.unit}, ${DateFormat.Hm().format(DateTime(
-                                  2023, 1, 1,
-                                  reminder.timeToTake!.hour,
-                                  reminder.timeToTake!.minute,
-                                ))}'
-                              : '${reminder.quantity} ${reminder.unit}, За потреби',
-                          style: TextStyle(
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
+    return _todayReminders.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'На сьогодні немає запланованих прийомів',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/course');
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Додати в курс'),
+                ),
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _todayReminders.length,
+            itemBuilder: (context, index) {
+              final reminder = _todayReminders[index];
+              final isCompleted = reminder.isConfirmed;
+              
+              return Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: isCompleted
+                            ? Colors.green.shade100
+                            : Theme.of(context).colorScheme.primaryContainer,
+                        child: Icon(
+                          isCompleted ? Icons.check : Icons.access_time,
+                          color: isCompleted
+                              ? Colors.green
+                              : Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
-                      if (!isCompleted)
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton.icon(
-                                onPressed: () => _markAsTaken(reminder),
-                                icon: const Icon(Icons.check),
-                                label: const Text('Прийнято'),
-                              ),
-                            ],
-                          ),
+                      title: Text(
+                        _getSupplementName(reminder.supplementId),
+                        style: TextStyle(
+                          decoration: isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
                         ),
-                    ],
-                  ),
-                );
-              },
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddSingleIntakeDialog,
-        child: const Icon(Icons.add),
-      ),
-    );
+                      ),
+                      subtitle: Text(
+                        reminder.timeToTake != null
+                            ? '${reminder.quantity} ${reminder.unit}, ${DateFormat.Hm().format(DateTime(
+                                2023, 1, 1,
+                                reminder.timeToTake!.hour,
+                                reminder.timeToTake!.minute,
+                              ))}'
+                            : '${reminder.quantity} ${reminder.unit}, За потреби',
+                        style: TextStyle(
+                          decoration: isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                    ),
+                    if (!isCompleted)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () => _markAsTaken(reminder),
+                              icon: const Icon(Icons.check),
+                              label: const Text('Прийнято'),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
+          );
   }
 }

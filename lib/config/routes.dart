@@ -20,6 +20,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     navigatorKey: _rootNavigatorKey,
+    
     redirect: (context, state) {
       final isLoggedIn = authState.isLoggedIn;
       final isGuestMode = authState.isGuestMode;
@@ -48,24 +49,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RegisterScreen(),
       ),
 
-      // Knowledge screen - доступний з будь-якого місця
-      GoRoute(
-        path: '/knowledge',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: const KnowledgeScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      ),
-
       // Main app shell with bottom navigation
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -76,66 +59,70 @@ final routerProvider = Provider<GoRouter>((ref) {
           // Home tab
           GoRoute(path: '/home', builder: (context, state) => const HomeTab()),
           // Course tab
-          GoRoute(
-            path: '/course',
-            builder: (context, state) {
-              // Check if user is in guest mode
-              final isGuestMode = ref.read(authProvider).isGuestMode;
-              if (isGuestMode) {
-                // Show dialog informing that this feature requires login
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  showDialog(
-                    context: _rootNavigatorKey.currentContext!,
-                    builder:
-                        (context) => AlertDialog(
-                          title: const Text('Обмежений доступ'),
-                          content: const Text(
-                            'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                  );
-                });
-                return const KnowledgeScreen(); // Redirect to knowledge screen instead
-              }
-              return const CourseScreen();
-            },
+GoRoute(
+  path: '/course',
+  builder: (context, state) {
+    final isGuestMode = ref.read(authProvider).isGuestMode;
+    if (isGuestMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Показуємо діалог
+        showDialog(
+          context: _rootNavigatorKey.currentContext!,
+          builder: (context) => AlertDialog(
+            title: const Text('Обмежений доступ'),
+            content: const Text(
+              'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
           ),
-          // Tracking tab
+        );
+      });
+
+      // Перенаправляємо на "Куток знань"
+      return const KnowledgeScreen();
+    }
+    return const CourseScreen();
+  },
+),
+GoRoute(
+  path: '/tracking',
+  builder: (context, state) {
+    final isGuestMode = ref.read(authProvider).isGuestMode;
+    if (isGuestMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Показуємо діалог
+        showDialog(
+          context: _rootNavigatorKey.currentContext!,
+          builder: (context) => AlertDialog(
+            title: const Text('Обмежений доступ'),
+            content: const Text(
+              'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
+
+      // Перенаправляємо на "Куток знань"
+      return const KnowledgeScreen();
+    }
+    return const TrackingScreen();
+  },
+),
+          // Knowledge tab - добавляємо як частину основної навігації
           GoRoute(
-            path: '/tracking',
-            builder: (context, state) {
-              // Check if user is in guest mode
-              final isGuestMode = ref.read(authProvider).isGuestMode;
-              if (isGuestMode) {
-                // Show dialog informing that this feature requires login
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  showDialog(
-                    context: _rootNavigatorKey.currentContext!,
-                    builder:
-                        (context) => AlertDialog(
-                          title: const Text('Обмежений доступ'),
-                          content: const Text(
-                            'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                  );
-                });
-                return const KnowledgeScreen(); // Redirect to knowledge screen instead
-              }
-              return const TrackingScreen();
-            },
+            path: '/knowledge',
+            builder: (context, state) => const KnowledgeScreen(),
           ),
         ],
       ),

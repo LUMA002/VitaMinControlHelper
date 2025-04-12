@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vita_min_control_helper/data/models/knowledge_item.dart';
 
 class KnowledgeScreen extends ConsumerWidget {
@@ -49,64 +50,59 @@ class KnowledgeScreen extends ConsumerWidget {
       ),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Куток знань'),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: knowledgeItems.length,
-        itemBuilder: (context, index) {
-          final item = knowledgeItems[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16.0),
-            child: ExpansionTile(
-              leading: Icon(
-                item.icon,
-                color: theme.colorScheme.primary,
-                size: 32,
-              ),
-              title: Text(
-                item.title,
-                style: theme.textTheme.titleLarge,
-              ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.description,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildInfoSection(
-                        context,
-                        'Рекомендоване дозування:',
-                        item.recommendedDosage,
-                        Icons.medication_outlined,
-                      ),
-                      _buildInfoSection(
-                        context,
-                        'Симптоми дефіциту:',
-                        item.deficiencySymptoms,
-                        Icons.sick_outlined,
-                      ),
-                      _buildInfoSection(
-                        context,
-                        'Симптоми передозування:',
-                        item.overdoseSymptoms,
-                        Icons.warning_amber_outlined,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: knowledgeItems.length,
+      itemBuilder: (context, index) {
+        final item = knowledgeItems[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16.0),
+          child: ExpansionTile(
+            leading: Icon(
+              item.icon,
+              color: theme.colorScheme.primary,
+              size: 32,
             ),
-          );
-        },
-      ),
+            title: Text(
+              item.title,
+              style: theme.textTheme.titleLarge,
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.description,
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInfoSection(
+                      context,
+                      'Рекомендоване дозування:',
+                      item.recommendedDosage,
+                      Icons.medication_outlined,
+                    ),
+                    _buildInfoSection(
+                      context,
+                      'Симптоми дефіциту:',
+                      item.deficiencySymptoms,
+                      Icons.sick_outlined,
+                    ),
+                    _buildInfoSection(
+                      context,
+                      'Симптоми передозування:',
+                      item.overdoseSymptoms,
+                      Icons.warning_amber_outlined,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

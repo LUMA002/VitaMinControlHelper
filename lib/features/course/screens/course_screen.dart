@@ -55,72 +55,56 @@ class _CourseScreenState extends State<CourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Мій курс'),
-      ),
-      body: _reminders.isEmpty
-          ? Center(
-              child: Text(
-                'У вас ще немає запланованих прийомів.\nНатисніть + щоб додати.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            )
-          : ListView.builder(
-              itemCount: _reminders.length,
-              itemBuilder: (context, index) {
-                final reminder = _reminders[index];
-                return Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      child: Text(
-                        _getSupplementName(reminder.supplementId)[0],
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
+    return _reminders.isEmpty
+        ? Center(
+            child: Text(
+              'У вас ще немає запланованих прийомів.\nНатисніть + щоб додати.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          )
+        : ListView.builder(
+            itemCount: _reminders.length,
+            itemBuilder: (context, index) {
+              final reminder = _reminders[index];
+              return Card(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    child: Text(
+                      _getSupplementName(reminder.supplementId)[0],
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                     ),
-                    title: Text(_getSupplementName(reminder.supplementId)),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${_formatFrequency(reminder.frequency)}, ${reminder.quantity} ${reminder.unit}'),
-                        if (reminder.timeToTake != null)
-                          Text('Час прийому: ${_formatTime(reminder.timeToTake)}'),
-                        Text('Залишилось: ${reminder.stockAmount} ${reminder.unit}'),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddEditMedicationScreen(
-                              reminder: reminder,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    isThreeLine: true,
                   ),
-                );
-              },
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddEditMedicationScreen(),
-            ),
+                  title: Text(_getSupplementName(reminder.supplementId)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${_formatFrequency(reminder.frequency)}, ${reminder.quantity} ${reminder.unit}'),
+                      if (reminder.timeToTake != null)
+                        Text('Час прийому: ${_formatTime(reminder.timeToTake)}'),
+                      Text('Залишилось: ${reminder.stockAmount} ${reminder.unit}'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddEditMedicationScreen(
+                            reminder: reminder,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  isThreeLine: true,
+                ),
+              );
+            },
           );
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
   }
 }

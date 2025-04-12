@@ -127,209 +127,204 @@ class _TrackingScreenState extends State<TrackingScreen> {
     final barGroups = _getBarGroups();
     final dailyCounts = _getDailyIntakeCount();
     
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Відстеження'),
-      ),
-      body: filteredLogs.isEmpty
-          ? Center(
-              child: Text(
-                'Немає даних про прийоми.\nПочніть приймати препарати\nдля відображення статистики.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Filter controls
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: 'Період',
-                            border: OutlineInputBorder(),
-                          ),
-                          value: _selectedPeriod,
-                          items: _periods.map((period) {
-                            return DropdownMenuItem<String>(
-                              value: period,
-                              child: Text(period),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() {
-                                _selectedPeriod = value;
-                              });
-                            }
-                          },
+    return filteredLogs.isEmpty
+        ? Center(
+            child: Text(
+              'Немає даних про прийоми.\nПочніть приймати препарати\nдля відображення статистики.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          )
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Filter controls
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Період',
+                          border: OutlineInputBorder(),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: DropdownButtonFormField<String?>(
-                          decoration: const InputDecoration(
-                            labelText: 'Препарат',
-                            border: OutlineInputBorder(),
-                          ),
-                          value: _selectedSupplementId,
-                          items: [
-                            const DropdownMenuItem<String?>(
-                              value: null,
-                              child: Text('Усі'),
-                            ),
-                            ..._supplements.map((supplement) {
-                              return DropdownMenuItem<String?>(
-                                value: supplement.id,
-                                child: Text(supplement.name),
-                              );
-                            }),
-                          ],
-                          onChanged: (String? value) {
+                        value: _selectedPeriod,
+                        items: _periods.map((period) {
+                          return DropdownMenuItem<String>(
+                            value: period,
+                            child: Text(period),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value != null) {
                             setState(() {
-                              _selectedSupplementId = value;
+                              _selectedPeriod = value;
                             });
-                          },
-                        ),
+                          }
+                        },
                       ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Bar chart for daily intake
-                  if (barGroups.isNotEmpty) ...[
-                    Text(
-                      'Кількість прийомів по днях',
-                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 250,
-                      child: BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: dailyCounts.values.reduce((a, b) => a > b ? a : b).toDouble() * 1.2,
-                          gridData: FlGridData(show: false),
-                          borderData: FlBorderData(show: false),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    value.toInt().toString(),
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  );
-                                },
-                                reservedSize: 30,
-                              ),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  if (value >= 0 && value < dailyCounts.keys.length) {
-                                    final date = dailyCounts.keys.elementAt(value.toInt());
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Text(
-                                        date,
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  return const Text('');
-                                },
-                                reservedSize: 30,
-                              ),
-                            ),
-                          ),
-                          barGroups: barGroups,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: DropdownButtonFormField<String?>(
+                        decoration: const InputDecoration(
+                          labelText: 'Препарат',
+                          border: OutlineInputBorder(),
                         ),
+                        value: _selectedSupplementId,
+                        items: [
+                          const DropdownMenuItem<String?>(
+                            value: null,
+                            child: Text('Усі'),
+                          ),
+                          ..._supplements.map((supplement) {
+                            return DropdownMenuItem<String?>(
+                              value: supplement.id,
+                              child: Text(supplement.name),
+                            );
+                          }),
+                        ],
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedSupplementId = value;
+                          });
+                        },
                       ),
                     ),
                   ],
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Supplement count section
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Bar chart for daily intake
+                if (barGroups.isNotEmpty) ...[
                   Text(
-                    'Статистика по препаратам',
+                    'Кількість прийомів по днях',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 16),
-                  
-                  // List of supplements with count
-                  ...supplementCounts.entries.map((entry) {
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        title: Text(entry.key),
-                        trailing: Text(
-                          '${entry.value} раз(ів)',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                    );
-                  }),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Recent intakes section
-                  Text(
-                    'Останні прийоми',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  ...filteredLogs.reversed.take(5).map((log) {
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                          child: Text(
-                            _getSupplementName(log.supplementId)[0],
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 250,
+                    child: BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: dailyCounts.values.reduce((a, b) => a > b ? a : b).toDouble() * 1.2,
+                        gridData: FlGridData(show: false),
+                        borderData: FlBorderData(show: false),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                );
+                              },
+                              reservedSize: 30,
+                            ),
+                          ),
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                if (value >= 0 && value < dailyCounts.keys.length) {
+                                  final date = dailyCounts.keys.elementAt(value.toInt());
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      date,
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const Text('');
+                              },
+                              reservedSize: 30,
                             ),
                           ),
                         ),
-                        title: Text(_getSupplementName(log.supplementId)),
-                        subtitle: Text(
-                          '${log.quantity} ${log.unit}',
-                        ),
-                        trailing: Text(
-                          DateFormat('dd.MM.yyyy HH:mm').format(log.takenAt),
+                        barGroups: barGroups,
+                      ),
+                    ),
+                  ),
+                ],
+                
+                const SizedBox(height: 32),
+                
+                // Supplement count section
+                Text(
+                  'Статистика по препаратам',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
+                
+                // List of supplements with count
+                ...supplementCounts.entries.map((entry) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      title: Text(entry.key),
+                      trailing: Text(
+                        '${entry.value} раз(ів)',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  );
+                }),
+                
+                const SizedBox(height: 24),
+                
+                // Recent intakes section
+                Text(
+                  'Останні прийоми',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
+                
+                ...filteredLogs.reversed.take(5).map((log) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                        child: Text(
+                          _getSupplementName(log.supplementId)[0],
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSecondaryContainer,
                           ),
                         ),
                       ),
-                    );
-                  }),
-                ],
-              ),
+                      title: Text(_getSupplementName(log.supplementId)),
+                      subtitle: Text(
+                        '${log.quantity} ${log.unit}',
+                      ),
+                      trailing: Text(
+                        DateFormat('dd.MM.yyyy HH:mm').format(log.takenAt),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ),
-    );
+          );
   }
 }
