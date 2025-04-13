@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Auth state
 class AuthState {
-
-    AuthState({
+  AuthState({
     this.isLoggedIn = false,
     this.isGuestMode = false,
     this.userId,
@@ -11,13 +10,11 @@ class AuthState {
     this.username,
   });
 
-
   final bool isLoggedIn;
   final bool isGuestMode;
   final String? userId;
   final String? userEmail;
   final String? username;
-
 
   AuthState copyWith({
     bool? isLoggedIn,
@@ -36,9 +33,12 @@ class AuthState {
   }
 }
 
-// Auth notifier
-class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(AuthState());
+// Auth notifier using Notifier
+class AuthNotifier extends Notifier<AuthState> {
+  @override
+  AuthState build() {
+    return AuthState(); // Initial state
+  }
 
   void setLoggedIn(bool isLoggedIn) {
     state = state.copyWith(isLoggedIn: isLoggedIn);
@@ -66,6 +66,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 }
 
 // Provider
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
   return AuthNotifier();
-}); 
+});
