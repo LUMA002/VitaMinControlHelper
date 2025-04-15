@@ -178,8 +178,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
                     },
                   ),
                   Text(
-                    '${DateFormat('d MMM').format(weekDays.first)} - '
-                    '${DateFormat('d MMM').format(weekDays.last)}',
+                    '${DateFormat('d MMM', 'uk').format(weekDays.first)} - '
+                    '${DateFormat('d MMM','uk').format(weekDays.last)}',
                     style: theme.textTheme.titleMedium,
                   ),
                   IconButton(
@@ -220,7 +220,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                           child: Column(
                             children: [
                               Text(
-                                DateFormat('uk').format(day)[0],
+                                DateFormat.E('uk').format(day)[0],
                                 style: theme.textTheme.bodyMedium,
                               ),
                               Text(

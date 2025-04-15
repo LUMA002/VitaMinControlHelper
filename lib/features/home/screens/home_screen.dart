@@ -126,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               switch (index) {
                 case 0:
                   context.go('/home');
-                  break;
+                  break; 
                 case 1:
                   context.go('/course');
                   break;

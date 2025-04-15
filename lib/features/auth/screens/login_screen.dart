@@ -76,12 +76,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return 'Будь ласка, введіть email';
                     }
 
-                    final emailRegex = RegExp(
+                    /*                     final emailRegex = RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                     );
                     if (!emailRegex.hasMatch(value)) {
                       return 'Введіть коректний email';
-                    }
+                    } */
 
                     return null;
                   },
@@ -114,9 +114,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Будь ласка, введіть пароль';
                     }
-                    if (value.length < 6) {
+                    /*                     if (value.length < 6) {
                       return 'Пароль має містити не менше 6 символів';
-                    }
+                    } */
                     return null;
                   },
                   onFieldSubmitted: (_) {
@@ -185,9 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final email = _emailController.text;
         final password = _passwordController.text;
 
-        if (mounted &&
-            email == 'test@example.com' &&
-            password == 'password123') {
+        if (mounted && email == '1' && password == '1') {
           ref.read(authProvider.notifier).setLoggedIn(true);
           ref.read(authProvider.notifier).setGuestMode(false);
           context.go('/home');
