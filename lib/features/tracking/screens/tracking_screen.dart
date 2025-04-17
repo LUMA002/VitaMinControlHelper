@@ -153,10 +153,24 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
     return _reminders.isEmpty
         ? Center(
-          child: Text(
-            'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Navigate to CourseScreen
+                  Navigator.pushNamed(context, '/course');
+                },
+                icon: const Icon(Icons.medication),
+                label: const Text('Перейти до курсу'),
+              ),
+            ],
           ),
         )
         : Column(
@@ -179,7 +193,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   ),
                   Text(
                     '${DateFormat('d MMM', 'uk').format(weekDays.first)} - '
-                    '${DateFormat('d MMM','uk').format(weekDays.last)}',
+                    '${DateFormat('d MMM', 'uk').format(weekDays.last)}',
                     style: theme.textTheme.titleMedium,
                   ),
                   IconButton(

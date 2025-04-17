@@ -104,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           setState(() {
             if (isGuestMode && (index == 1 || index == 2)) {
               GuestModeDialog.show(context); // Показуємо діалогове вікно
-             /*  showDialog(
+              /*  showDialog(
                 context: context,
                 builder:
                     (context) => AlertDialog(
@@ -126,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               switch (index) {
                 case 0:
                   context.go('/home');
-                  break; 
+                  break;
                 case 1:
                   context.go('/course');
                   break;

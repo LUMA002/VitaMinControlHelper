@@ -53,98 +53,104 @@ class _CourseScreenState extends State<CourseScreen> {
     return '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}';
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _reminders.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'У вас ще немає запланованих прийомів.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddEditMedicationScreen(),
-                        ),
-                      ).then((_) => setState(() => _loadData()));
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Додати препарат'),
-                  ),
-                ],
+    return _reminders.isEmpty
+        ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'У вас ще немає запланованих прийомів.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-            )
-          : Stack(
-              children: [
-                ListView.builder(
-                  //padding: const EdgeInsets.all(16),
-                  itemCount: _reminders.length,
-                  itemBuilder: (context, index) {
-              final reminder = _reminders[index];
-              return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    child: Text(
-                      _getSupplementName(reminder.supplementId)[0],
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddEditMedicationScreen(),
+                    ),
+                  ).then((_) => setState(() => _loadData()));
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Додати препарат'),
+              ),
+            ],
+          ),
+        )
+        : Stack(
+          children: [
+            ListView.builder(
+              //padding: const EdgeInsets.all(16),
+              itemCount: _reminders.length,
+              itemBuilder: (context, index) {
+                final reminder = _reminders[index];
+                return Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryContainer,
+                      child: Text(
+                        _getSupplementName(reminder.supplementId)[0],
+                        style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
                       ),
                     ),
-                  ),
-                  title: Text(_getSupplementName(reminder.supplementId)),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${_formatFrequency(reminder.frequency)}, ${reminder.quantity} ${reminder.unit}'),
-                      if (reminder.timeToTake != null)
-                        Text('Час прийому: ${_formatTime(reminder.timeToTake)}'),
-                      Text('Залишилось: ${reminder.stockAmount} ${reminder.unit}'),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddEditMedicationScreen(
-                            reminder: reminder,
+                    title: Text(_getSupplementName(reminder.supplementId)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_formatFrequency(reminder.frequency)}, ${reminder.quantity} ${reminder.unit}',
+                        ),
+                        if (reminder.timeToTake != null)
+                          Text(
+                            'Час прийому: ${_formatTime(reminder.timeToTake)}',
                           ),
+                        Text(
+                          'Залишилось: ${reminder.stockAmount} ${reminder.unit}',
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    AddEditMedicationScreen(reminder: reminder),
+                          ),
+                        );
+                      },
+                    ),
+                    isThreeLine: true,
                   ),
-                  isThreeLine: true,
-                ),
-              );
-            },
-          ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddEditMedicationScreen(),
-                        ),
-                      ).then((_) => setState(() => _loadData()));
-                    },
-                    child: const Icon(Icons.add),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-    );
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddEditMedicationScreen(),
+                    ),
+                  ).then((_) => setState(() => _loadData()));
+                },
+                child: const Icon(Icons.add),
+              ),
+            ),
+          ],
+        );
   }
 }

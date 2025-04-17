@@ -9,31 +9,36 @@ class KnowledgeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     // Mock data for knowledge items
     final knowledgeItems = [
       KnowledgeItem(
         id: '1',
         title: 'Вітамін D',
-        description: 'Вітамін D відіграє важливу роль у засвоєнні кальцію та фосфору, сприяє зміцненню кісток і зубів. Також впливає на імунну систему та перешкоджає розвитку аутоімунних захворювань.',
+        description:
+            'Вітамін D відіграє важливу роль у засвоєнні кальцію та фосфору, сприяє зміцненню кісток і зубів. Також впливає на імунну систему та перешкоджає розвитку аутоімунних захворювань.',
         recommendedDosage: '600-800 МО на день для дорослих',
-        deficiencySymptoms: 'Біль у кістках, м\'язова слабкість, підвищена втомлюваність',
+        deficiencySymptoms:
+            'Біль у кістках, м\'язова слабкість, підвищена втомлюваність',
         overdoseSymptoms: 'Нудота, блювота, підвищення рівня кальцію в крові',
         icon: Icons.wb_sunny_outlined,
       ),
       KnowledgeItem(
         id: '2',
         title: 'Вітамін C',
-        description: 'Вітамін C є потужним антиоксидантом, сприяє зміцненню імунної системи, покращує всмоктування заліза з їжі, сприяє утворенню колагену, який потрібен для здоров\'я шкіри, сухожиль і кровоносних судин.',
+        description:
+            'Вітамін C є потужним антиоксидантом, сприяє зміцненню імунної системи, покращує всмоктування заліза з їжі, сприяє утворенню колагену, який потрібен для здоров\'я шкіри, сухожиль і кровоносних судин.',
         recommendedDosage: '75-90 мг на день для дорослих',
-        deficiencySymptoms: 'Кровоточивість ясен, повільне загоєння ран, сухість шкіри',
+        deficiencySymptoms:
+            'Кровоточивість ясен, повільне загоєння ран, сухість шкіри',
         overdoseSymptoms: 'Діарея, нудота, судоми в животі',
         icon: Icons.sanitizer_outlined,
       ),
       KnowledgeItem(
         id: '3',
         title: 'Цинк',
-        description: 'Цинк є важливим мінералом, який бере участь у багатьох біохімічних процесах організму. Він необхідний для нормального функціонування імунної системи, загоєння ран, синтезу ДНК та підтримки нормального відчуття смаку та запаху.',
+        description:
+            'Цинк є важливим мінералом, який бере участь у багатьох біохімічних процесах організму. Він необхідний для нормального функціонування імунної системи, загоєння ран, синтезу ДНК та підтримки нормального відчуття смаку та запаху.',
         recommendedDosage: '8-11 мг на день для дорослих',
         deficiencySymptoms: 'Випадіння волосся, діарея, затримка росту у дітей',
         overdoseSymptoms: 'Нудота, біль у животі, головний біль',
@@ -42,9 +47,11 @@ class KnowledgeScreen extends ConsumerWidget {
       KnowledgeItem(
         id: '4',
         title: 'Кальцій',
-        description: 'Кальцій - це мінерал, необхідний для формування і зміцнення кісток і зубів. Він також регулює м\'язові скорочення, включаючи серцебиття, і забезпечує правильне функціонування нервової системи.',
+        description:
+            'Кальцій - це мінерал, необхідний для формування і зміцнення кісток і зубів. Він також регулює м\'язові скорочення, включаючи серцебиття, і забезпечує правильне функціонування нервової системи.',
         recommendedDosage: '1000-1200 мг на день для дорослих',
-        deficiencySymptoms: 'Остеопороз, м\'язові судоми, підвищений ризик переломів',
+        deficiencySymptoms:
+            'Остеопороз, м\'язові судоми, підвищений ризик переломів',
         overdoseSymptoms: 'Камені в нирках, закрепи, проблеми з серцем',
         icon: Icons.fitness_center_outlined,
       ),
@@ -63,20 +70,14 @@ class KnowledgeScreen extends ConsumerWidget {
               color: theme.colorScheme.primary,
               size: 32,
             ),
-            title: Text(
-              item.title,
-              style: theme.textTheme.titleLarge,
-            ),
+            title: Text(item.title, style: theme.textTheme.titleLarge),
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.description,
-                      style: theme.textTheme.bodyLarge,
-                    ),
+                    Text(item.description, style: theme.textTheme.bodyLarge),
                     const SizedBox(height: 16),
                     _buildInfoSection(
                       context,
@@ -113,7 +114,7 @@ class KnowledgeScreen extends ConsumerWidget {
     IconData icon,
   ) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Column(
@@ -121,11 +122,7 @@ class KnowledgeScreen extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: theme.colorScheme.secondary,
-              ),
+              Icon(icon, size: 18, color: theme.colorScheme.secondary),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -137,12 +134,9 @@ class KnowledgeScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 4),
-          Text(
-            content,
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(content, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
   }
-} 
+}
