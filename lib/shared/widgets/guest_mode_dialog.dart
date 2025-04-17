@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
-class GuestModeDialog extends StatelessWidget {
-  const GuestModeDialog({super.key});
+import 'package:go_router/go_router.dart';
 
-  static Future<void> show(BuildContext context) {
-    return showDialog(
+class GuestModeDialog {
+  static void show(BuildContext context) {
+    showDialog(
       context: context,
-      builder: (context) => const GuestModeDialog(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Обмежений доступ'),
-      content: const Text(
-        'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('OK'),
-        ),
-      ],
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Обмежений доступ'),
+            content: const Text(
+              'Ця функція доступна тільки авторизованим користувачам. '
+              'Увійдіть або зареєструйтеся, щоб отримати повний доступ до додатку.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Залишитись гостем'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.go('/login');
+                },
+                child: const Text('Увійти'),
+              ),
+            ],
+          ),
     );
   }
 }

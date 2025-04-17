@@ -102,7 +102,7 @@ namespace api.Controllers
             var supplement = createDto.ToSupplementFromCreateDto(userId);
             
             // Додаємо зв'язки з типами якщо вони вказані
-            if (createDto.TypeIds.Any())
+            if (createDto.TypeIds != null && createDto.TypeIds.Any())
             {
                 foreach (var typeId in createDto.TypeIds)
                 {
@@ -159,17 +159,20 @@ namespace api.Controllers
             // Оновлюємо зв'язки з типами
             _context.SupplementTypeRelations.RemoveRange(supplement.TypeRelations);
             
-            foreach (var typeId in updateDto.TypeIds)
+            if (updateDto.TypeIds != null)
             {
-                var type = await _context.SupplementTypes.FindAsync(typeId);
-                if (type != null)
+                foreach (var typeId in updateDto.TypeIds)
                 {
-                    supplement.TypeRelations.Add(new SupplementTypeRelation
+                    var type = await _context.SupplementTypes.FindAsync(typeId);
+                    if (type != null)
                     {
-                        RelationID = Guid.NewGuid(),
-                        SupplementID = supplement.SupplementID,
-                        TypeID = type.TypeID
-                    });
+                        supplement.TypeRelations.Add(new SupplementTypeRelation
+                        {
+                            RelationID = Guid.NewGuid(),
+                            SupplementID = supplement.SupplementID,
+                            TypeID = type.TypeID
+                        });
+                    }
                 }
             }
 

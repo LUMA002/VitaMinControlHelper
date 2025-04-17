@@ -9,70 +9,78 @@ import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_scr
 import 'package:vita_min_control_helper/shared/widgets/guest_mode_dialog.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  final Widget child;
+  final int initialTabIndex;
 
-  const HomeScreen({super.key, required this.child});
+  const HomeScreen({super.key, required this.initialTabIndex});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _currentIndex = 0;
-
-  // Метод для визначення поточного індексу на основі child
-
-  void _updateCurrentIndex() {
-    final isGuestMode = ref.read(authProvider).isGuestMode;
-    if (widget.child is HomeTab) {
-      _currentIndex = 0;
-    } else if (widget.child is CourseScreen) {
-      _currentIndex = isGuestMode ? 3 : 1; // Перевіряємо доступність
-    } else if (widget.child is TrackingScreen) {
-      _currentIndex = isGuestMode ? 3 : 2; // Перевіряємо доступність
-    } else if (widget.child is KnowledgeScreen) {
-      _currentIndex = 3;
-    }
-  }
-
-  String _getAppBarTitle() {
-    // Змінюємо заголовки відповідно до потреб
-    if (_currentIndex == 0) {
-      return 'Сьогоднішні завдання'; // або просто 'Сьогодні'
-    } else if (_currentIndex == 1) {
-      return 'Мій курс';
-    } else if (_currentIndex == 2) {
-      return 'Відстеження';
-    } else if (_currentIndex == 3) {
-      return 'Куток знань';
-    }
-    return 'VitaMin Control';
-  }
-
-  @override
-  void didUpdateWidget(HomeScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _updateCurrentIndex();
-  }
+  late int _currentIndex;
+  late Widget _currentScreen;
 
   @override
   void initState() {
     super.initState();
-    _updateCurrentIndex();
+    _currentIndex = widget.initialTabIndex;
+    _updateCurrentScreen();
+  }
+
+  void _updateCurrentScreen() {
+    final authState = ref.read(authProvider);
+    final isGuest = authState.isGuest;
+
+    // If user is guest, force Knowledge tab
+    if (isGuest && _currentIndex != 3) {
+      _currentIndex = 3;
+    }
+
+    switch (_currentIndex) {
+      case 0:
+        _currentScreen = const HomeTab();
+        break;
+      case 1:
+        _currentScreen = const TrackingScreen();
+        break;
+      case 2:
+        _currentScreen = const CourseScreen();
+        break;
+      case 3:
+        _currentScreen = const KnowledgeScreen();
+        break;
+      default:
+        _currentScreen = const HomeTab();
+    }
+  }
+
+  String _getAppBarTitle() {
+    switch (_currentIndex) {
+      case 0:
+        return 'Сьогоднішні завдання';
+      case 1:
+        return 'Відстеження';
+      case 2:
+        return 'Мій курс';
+      case 3:
+        return 'Куток знань';
+      default:
+        return 'VitaMin Control';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //  final isHomeTab = widget.child is HomeTab;
-    final isKnowledgeScreen = widget.child is KnowledgeScreen;
     final authState = ref.watch(authProvider);
+    final isGuest = authState.isGuest;
+    final isKnowledgeScreen = _currentIndex == 3;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
-        // Показуємо кнопку "Назад" тільки для екрану "Куток знань"
         leading:
-            isKnowledgeScreen
+            isKnowledgeScreen && !isGuest
                 ? IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
@@ -81,10 +89,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 )
                 : null,
         actions: [
-          // Прибираємо кнопку "Куток знань", оскільки вона вже є в нижній навігації
+          // Show login button for guests
+          if (isGuest)
+            TextButton.icon(
+              icon: const Icon(Icons.login),
+              label: const Text('Увійти'),
+              onPressed: () {
+                context.go('/login');
+              },
+            ),
 
-          // Залишаємо кнопку виходу для авторизованих користувачів
-          if (authState.isLoggedIn)
+          // Show logout button for logged in users
+          if (authState.isLoggedIn && !isGuest)
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Вийти',
@@ -95,48 +111,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
         ],
       ),
-      body: widget.child,
+      body: _currentScreen,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {
-          final isGuestMode = ref.read(authProvider).isGuestMode;
+          // Check if user is in guest mode
+          if (isGuest && index != 3) {
+            // Show dialog
+            GuestModeDialog.show(context);
+            return;
+          }
 
           setState(() {
-            if (isGuestMode && (index == 1 || index == 2)) {
-              GuestModeDialog.show(context); // Показуємо діалогове вікно
-              /*  showDialog(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: const Text('Обмежений доступ'),
-                      content: const Text(
-                        '!Ця функція доступна тільки авторизованим користувачам. '
-                        'Будь ласка, увійдіть або зареєструйтесь, щоб отримати доступ.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-              ); */
-            } else {
-              _currentIndex = index;
-              switch (index) {
-                case 0:
-                  context.go('/home');
-                  break;
-                case 1:
-                  context.go('/course');
-                  break;
-                case 2:
-                  context.go('/tracking');
-                  break;
-                case 3:
-                  context.go('/knowledge');
-                  break;
-              }
+            _currentIndex = index;
+            _updateCurrentScreen();
+
+            switch (index) {
+              case 0:
+                context.go('/home');
+                break;
+              case 1:
+                context.go('/tracking');
+                break;
+              case 2:
+                context.go('/course');
+                break;
+              case 3:
+                context.go('/knowledge');
+                break;
             }
           });
         },
@@ -147,14 +149,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             label: 'Головна',
           ),
           NavigationDestination(
-            icon: Icon(Icons.medication_outlined),
-            selectedIcon: Icon(Icons.medication),
-            label: 'Курс',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.analytics_outlined),
             selectedIcon: Icon(Icons.analytics),
             label: 'Відстеження',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.medication_outlined),
+            selectedIcon: Icon(Icons.medication),
+            label: 'Курс',
           ),
           NavigationDestination(
             icon: Icon(Icons.library_books_outlined),

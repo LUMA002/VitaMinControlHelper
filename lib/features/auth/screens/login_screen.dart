@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
+import 'package:vita_min_control_helper/services/api_service.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -75,14 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Будь ласка, введіть email';
                     }
-
-                    /*                     final emailRegex = RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    );
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Введіть коректний email';
-                    } */
-
                     return null;
                   },
                 ),
@@ -114,15 +108,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Будь ласка, введіть пароль';
                     }
-                    /*                     if (value.length < 6) {
-                      return 'Пароль має містити не менше 6 символів';
-                    } */
                     return null;
                   },
                   onFieldSubmitted: (_) {
                     _login();
                   },
                 ),
+
+                const SizedBox(height: 8),
+
+                // Показуємо помилку, якщо вона є
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: theme.colorScheme.error),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
 
                 const SizedBox(height: 32),
 
@@ -160,8 +164,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       _isLoading
                           ? null
                           : () {
-                            ref.read(authProvider.notifier).setGuestMode(true);
-                            context.go('/home');
+                            ref.read(authProvider.notifier).setGuestMode(); //передавався тру
+                            context.go('/knowledge');
                           },
                   child: const Text('Продовжити як гість'),
                 ),
@@ -173,37 +177,49 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isLoading = true;
+        _errorMessage = null;
       });
 
-      // Simulate login delay
-      Future.delayed(const Duration(seconds: 1), () {
-        // For testing purposes, let's check for a demo account
-        final email = _emailController.text;
-        final password = _passwordController.text;
+      final email = _emailController.text;
+      final password = _passwordController.text;
 
-        if (mounted && email == '1' && password == '1') {
-          ref.read(authProvider.notifier).setLoggedIn(true);
-          ref.read(authProvider.notifier).setGuestMode(false);
+      // Використовуємо API сервіс для авторизації
+      final apiService = ref.read(apiServiceProvider);
+      final responseData = await apiService.login(email, password);
+
+      if (mounted) {
+        if (responseData != null && responseData['success'] == true) {
+          // Успішний вхід
+          final user = responseData['user'];
+          final token = responseData['token'];
+          final expiration = DateTime.parse(responseData['expiration']);
+
+          // Зберігаємо дані авторизації
+          ref
+              .read(authProvider.notifier)
+              .setAuthData(
+                userId: user['id'],
+                userEmail: user['email'],
+                username: user['username'],
+                token: token,
+                tokenExpiration: expiration,
+              );
+
+          // Переходимо на головний екран
           context.go('/home');
         } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Невірний email або пароль'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
+          // Невдалий вхід
+          setState(() {
+            _isLoading = false;
+            _errorMessage =
+                responseData?['message'] ?? 'Помилка входу. Спробуйте ще раз.';
+          });
         }
-
-        setState(() {
-          _isLoading = false;
-        });
-      });
+      }
     }
   }
 }

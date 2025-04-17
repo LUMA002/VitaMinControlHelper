@@ -1,89 +1,78 @@
 import 'package:uuid/uuid.dart';
-import 'supplement_form.dart';
 import 'supplement_type.dart';
 
 class Supplement {
   final String id;
   final String name;
   final String? description;
-  final String? recommendedDosage;
   final String? deficiencySymptoms;
-  final String? overdoseSymptoms;
-  final bool isMedication;
+  final bool isGlobal;
+  final String? creatorId;
+  final DateTime createdAt;
   final List<SupplementType> types;
-  final List<SupplementForm> forms;
-  final bool isCustom;
 
   Supplement({
     String? id,
     required this.name,
     this.description,
-    this.recommendedDosage,
     this.deficiencySymptoms,
-    this.overdoseSymptoms,
-    this.isMedication = false,
+    this.isGlobal = false,
+    this.creatorId,
+    DateTime? createdAt,
     this.types = const [],
-    this.forms = const [],
-    this.isCustom = false,
-  }) : id = id ?? const Uuid().v4();
+  }) : id = id ?? const Uuid().v4(),
+       createdAt = createdAt ?? DateTime.now();
 
   factory Supplement.fromJson(Map<String, dynamic> json) {
     return Supplement(
-      id: json['id'],
+      id: json['supplementID'] ?? json['id'],
       name: json['name'],
       description: json['description'],
-      recommendedDosage: json['recommendedDosage'],
       deficiencySymptoms: json['deficiencySymptoms'],
-      overdoseSymptoms: json['overdoseSymptoms'],
-      isMedication: json['isMedication'] ?? false,
-      types: (json['types'] as List?)
-          ?.map((type) => SupplementType.fromJson(type))
-          .toList() ?? [],
-      forms: (json['forms'] as List?)
-          ?.map((form) => SupplementForm.fromJson(form))
-          .toList() ?? [],
-      isCustom: json['isCustom'] ?? false,
+      isGlobal: json['isGlobal'] ?? false,
+      creatorId: json['creatorId'],
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
+      types:
+          (json['types'] as List?)
+              ?.map((type) => SupplementType.fromJson(type))
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'supplementID': id,
       'name': name,
       'description': description,
-      'recommendedDosage': recommendedDosage,
       'deficiencySymptoms': deficiencySymptoms,
-      'overdoseSymptoms': overdoseSymptoms,
-      'isMedication': isMedication,
+      'isGlobal': isGlobal,
+      'creatorId': creatorId,
+      'createdAt': createdAt.toIso8601String(),
       'types': types.map((type) => type.toJson()).toList(),
-      'forms': forms.map((form) => form.toJson()).toList(),
-      'isCustom': isCustom,
     };
   }
 
   Supplement copyWith({
     String? name,
     String? description,
-    String? recommendedDosage,
     String? deficiencySymptoms,
-    String? overdoseSymptoms,
-    bool? isMedication,
+    bool? isGlobal,
+    String? creatorId,
     List<SupplementType>? types,
-    List<SupplementForm>? forms,
-    bool? isCustom,
   }) {
     return Supplement(
       id: id,
       name: name ?? this.name,
       description: description ?? this.description,
-      recommendedDosage: recommendedDosage ?? this.recommendedDosage,
       deficiencySymptoms: deficiencySymptoms ?? this.deficiencySymptoms,
-      overdoseSymptoms: overdoseSymptoms ?? this.overdoseSymptoms,
-      isMedication: isMedication ?? this.isMedication,
+      isGlobal: isGlobal ?? this.isGlobal,
+      creatorId: creatorId ?? this.creatorId,
+      createdAt: createdAt,
       types: types ?? this.types,
-      forms: forms ?? this.forms,
-      isCustom: isCustom ?? this.isCustom,
     );
   }
 }
-

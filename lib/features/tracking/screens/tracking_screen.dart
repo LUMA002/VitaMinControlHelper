@@ -62,20 +62,20 @@ class _TrackingScreenState extends State<TrackingScreen> {
         MockData.getIntakeLogs(MockData.defaultUser.id).where((log) {
           // Filter by supplement if one is selected
           if (_selectedSupplementId != null &&
-              log.supplementId != _selectedSupplementId) {
+              log.userSupplementId != _selectedSupplementId) {
             return false;
           }
 
           // Filter by period
           switch (_selectedPeriod) {
             case 'Тиждень':
-              return log.takenAt.isAfter(now.subtract(const Duration(days: 7)));
+              return log.createdAt.isAfter(now.subtract(const Duration(days: 7)));
             case 'Місяць':
-              return log.takenAt.isAfter(
+              return log.createdAt.isAfter(
                 now.subtract(const Duration(days: 30)),
               );
             case 'Рік':
-              return log.takenAt.isAfter(
+              return log.createdAt.isAfter(
                 now.subtract(const Duration(days: 365)),
               );
             default:
@@ -84,7 +84,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
         }).toList();
 
     // Sort by date
-    filtered.sort((a, b) => a.takenAt.compareTo(b.takenAt));
+    filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return filtered;
   }
 
@@ -94,7 +94,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     final Map<String, int> dailyCounts = {};
 
     for (var log in filteredLogs) {
-      final dateKey = DateFormat('MM-dd').format(log.takenAt);
+      final dateKey = DateFormat('MM-dd').format(log.createdAt);
       dailyCounts[dateKey] = (dailyCounts[dateKey] ?? 0) + 1;
     }
 
@@ -134,7 +134,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     final Map<String, int> supplementCounts = {};
 
     for (var log in filteredLogs) {
-      final supplementName = _getSupplementName(log.supplementId);
+      final supplementName = _getSupplementName(log.userSupplementId);
       supplementCounts[supplementName] =
           (supplementCounts[supplementName] ?? 0) + 1;
     }

@@ -153,6 +153,7 @@ class _HomeTabState extends State<HomeTab> {
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () {
+                  print('Navigating to /course');
                   context.go('/course');
                 },
                 icon: const Icon(Icons.add),

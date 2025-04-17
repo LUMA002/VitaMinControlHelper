@@ -45,19 +45,13 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
         name: _nameController.text,
         description: _descriptionController.text.isEmpty 
             ? null : _descriptionController.text,
-        recommendedDosage: _dosageController.text.isEmpty 
-            ? null : _dosageController.text,
         deficiencySymptoms: _deficiencySymptomsController.text.isEmpty 
             ? null : _deficiencySymptomsController.text,
-        overdoseSymptoms: _overdoseSymptomsController.text.isEmpty 
-            ? null : _overdoseSymptomsController.text,
-        isMedication: _isMedication,
         types: _selectedTypes,
-        forms: _selectedForms,
       );
       
       // Додаємо до списку препаратів (в реальному додатку тут був би код для збереження в БД)
-      MockData.addCustomSupplement(newSupplement);
+
       
       // Повертаємось на попередній екран з новим препаратом
       Navigator.pop(context, newSupplement);

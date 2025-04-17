@@ -2,49 +2,60 @@ import 'package:uuid/uuid.dart';
 
 class IntakeLog {
   final String id;
-  final String userId;
-  final String supplementId;
-  final String? formId;
-  final double quantity;
-  final String unit;
-  final double? stockAmount;
-  final DateTime takenAt;
+  final String userSupplementId;
+  final DateTime intakeTime;
+  final double? dosage;
+  final String? unit;
+  final DateTime createdAt;
 
   IntakeLog({
     String? id,
-    required this.userId,
-    required this.supplementId,
-    this.formId,
-    required this.quantity,
-    required this.unit,
-    this.stockAmount,
-    DateTime? takenAt,
-  })  : id = id ?? const Uuid().v4(),
-        takenAt = takenAt ?? DateTime.now();
+    required this.userSupplementId,
+    required this.intakeTime,
+    this.dosage,
+    this.unit,
+    DateTime? createdAt,
+  }) : id = id ?? const Uuid().v4(),
+       createdAt = createdAt ?? DateTime.now();
 
   factory IntakeLog.fromJson(Map<String, dynamic> json) {
     return IntakeLog(
-      id: json['id'],
-      userId: json['userId'],
-      supplementId: json['supplementId'],
-      formId: json['formId'],
-      quantity: json['quantity'],
+      id: json['intakeLogID'] ?? json['id'],
+      userSupplementId: json['userSupplementID'] ?? json['userSupplementId'],
+      intakeTime: DateTime.parse(json['intakeTime']),
+      dosage: json['dosage']?.toDouble(),
       unit: json['unit'],
-      stockAmount: json['stockAmount'],
-      takenAt: DateTime.parse(json['takenAt']),
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'userId': userId,
-      'supplementId': supplementId,
-      'formId': formId,
-      'quantity': quantity,
+      'intakeLogID': id,
+      'userSupplementID': userSupplementId,
+      'intakeTime': intakeTime.toIso8601String(),
+      'dosage': dosage,
       'unit': unit,
-      'stockAmount': stockAmount,
-      'takenAt': takenAt.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  IntakeLog copyWith({
+    String? userSupplementId,
+    DateTime? intakeTime,
+    double? dosage,
+    String? unit,
+  }) {
+    return IntakeLog(
+      id: id,
+      userSupplementId: userSupplementId ?? this.userSupplementId,
+      intakeTime: intakeTime ?? this.intakeTime,
+      dosage: dosage ?? this.dosage,
+      unit: unit ?? this.unit,
+      createdAt: createdAt,
+    );
   }
 }

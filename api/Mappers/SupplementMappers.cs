@@ -76,7 +76,7 @@ namespace api.Mappers
                 Name = createDto.Name,
                 Description = createDto.Description,
                 DeficiencySymptoms = createDto.DeficiencySymptoms,
-                IsGlobal = creatorId == null,
+                IsGlobal = creatorId == null || createDto.IsGlobal,
                 CreatorId = creatorId,
                 CreatedAt = DateTime.UtcNow
             };

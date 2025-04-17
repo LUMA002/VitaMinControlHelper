@@ -9,6 +9,7 @@ import 'package:vita_min_control_helper/features/home/screens/home_tab.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
 import 'package:vita_min_control_helper/features/tracking/screens/tracking_screen.dart';
 import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_screen.dart';
+import 'package:vita_min_control_helper/shared/widgets/guest_mode_dialog.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,27 +19,33 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/home',
     navigatorKey: _rootNavigatorKey,
 
     redirect: (context, state) {
       final isLoggedIn = authState.isLoggedIn;
-      final isGuestMode = authState.isGuestMode;
-      final isAuthRoute =
+      final isGuest = authState.isGuest;
+      final isGoingToAuth =
           state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
-      // If not logged in or not in guest mode and not on an auth route, redirect to login
-      if (!isLoggedIn && !isGuestMode && !isAuthRoute) {
+      // Not logged in and not a guest, redirect to login
+      if (!isLoggedIn && !isGuest && !isGoingToAuth) {
         return '/login';
       }
 
-      // If logged in or in guest mode and on an auth route, redirect to home
-      if ((isLoggedIn || isGuestMode) && isAuthRoute) {
+      // Logged in or guest, prevent access to auth pages
+      if ((isLoggedIn || isGuest) && isGoingToAuth) {
         return '/home';
       }
 
-      // Allow navigation to the requested page
+      // Guest users can only access knowledge section
+      if (isGuest &&
+          state.matchedLocation != '/knowledge' &&
+          !state.matchedLocation.startsWith('/knowledge/')) {
+        return '/knowledge';
+      }
+
       return null;
     },
     routes: [
@@ -53,78 +60,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
-          return HomeScreen(child: child);
+          return HomeScreen(initialTabIndex: 0,
+          );
         },
         routes: [
           // Home tab
-          GoRoute(path: '/home', builder: (context, state) => const HomeTab()),
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomeScreen(initialTabIndex: 0),
+          ),
           // Course tab
           GoRoute(
             path: '/course',
-            builder: (context, state) {
-            /*   final isGuestMode = ref.read(authProvider).isGuestMode;
-              if (isGuestMode) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // Показуємо діалог
-                  showDialog(
-                    context: _rootNavigatorKey.currentContext!,
-                    builder:
-                        (context) => AlertDialog(
-                          title: const Text('Обмежений доступ'),
-                          content: const Text(
-                            'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                  );
-                });
-
-                // Перенаправляємо на "Куток знань"
-                return const KnowledgeScreen();
-              } */
-              return const CourseScreen();
-            },
+            builder: (context, state) => const HomeScreen(initialTabIndex: 2),
           ),
           GoRoute(
             path: '/tracking',
-            builder: (context, state) {
-             /*  final isGuestMode = ref.read(authProvider).isGuestMode;
-              if (isGuestMode) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // Показуємо діалог
-                  showDialog(
-                    context: _rootNavigatorKey.currentContext!,
-                    builder:
-                        (context) => AlertDialog(
-                          title: const Text('Обмежений доступ'),
-                          content: const Text(
-                            'Ця функція доступна тільки авторизованим користувачам. Будь ласка, увійдіть або зареєструйтесь.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                  );
-                });
-
-                // Перенаправляємо на "Куток знань"
-                return const KnowledgeScreen();
-              } */
-              return const TrackingScreen();
-            },
+            builder: (context, state) => const HomeScreen(initialTabIndex: 1),
           ),
-          // Knowledge tab - добавляємо як частину основної навігації
+          // Knowledge tab - доступно для всіх користувачів
           GoRoute(
             path: '/knowledge',
-            builder: (context, state) => const KnowledgeScreen(),
+            builder: (context, state) => const HomeScreen(initialTabIndex: 3),
           ),
         ],
       ),

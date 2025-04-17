@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api.DTOs.Supplement
 {
-    public class CreateSupplementDto
+    public class UpdateSupplementDto
     {
+        [Required]
+        public Guid SupplementID { get; set; }
+        
         [Required]
         public string Name { get; set; }
         
