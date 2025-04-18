@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250417135513_main_init")]
-    partial class main_init
+    [Migration("20250418161414_thirdTryInit")]
+    partial class thirdTryInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -346,35 +346,6 @@ namespace api.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("api.Models.UserSupplement", b =>
-                {
-                    b.Property<Guid>("UserSupplementID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<double?>("DefaultDosage")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("DefaultUnit")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<Guid>("SupplementID")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("UserSupplementID");
-
-                    b.HasIndex("SupplementID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("UserSupplements");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -474,32 +445,11 @@ namespace api.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("api.Models.UserSupplement", b =>
-                {
-                    b.HasOne("api.Models.Supplement", "Supplement")
-                        .WithMany("UserSupplements")
-                        .HasForeignKey("SupplementID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.User", "User")
-                        .WithMany("UserSupplements")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Supplement");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("api.Models.Supplement", b =>
                 {
                     b.Navigation("IntakeLogs");
 
                     b.Navigation("TypeRelations");
-
-                    b.Navigation("UserSupplements");
                 });
 
             modelBuilder.Entity("api.Models.SupplementType", b =>
@@ -512,8 +462,6 @@ namespace api.Migrations
                     b.Navigation("CreatedSupplements");
 
                     b.Navigation("IntakeLogs");
-
-                    b.Navigation("UserSupplements");
                 });
 #pragma warning restore 612, 618
         }

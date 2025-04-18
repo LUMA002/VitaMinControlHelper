@@ -167,7 +167,7 @@ namespace api.Controllers
             return Ok(result);
         }
 
-        // DELETE: api/IntakeLogs/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIntakeLog(Guid id)
         {

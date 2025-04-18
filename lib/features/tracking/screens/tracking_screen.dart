@@ -22,9 +22,9 @@ class TrackingScreen extends ConsumerStatefulWidget {
 class _TrackingScreenState extends ConsumerState<TrackingScreen> {
   List<Reminder> _reminders = [];
   List<Supplement> _supplements = [];
-  List<IntakeLog> _intakeLogs = [];
+  final List<IntakeLog> _intakeLogs = [];
   DateTime _selectedWeek = DateTime.now();
-  String _selectedPeriod = 'Тиждень';
+  final String _selectedPeriod = 'Тиждень';
   String? _selectedSupplementId;
   bool _isLoading = true;
   String? _error;

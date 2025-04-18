@@ -257,7 +257,7 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                         children: [
                           Text('Час: ${_formatTime(reminder.timeToTake)}'),
                           Text(
-                            'Кількість: ${reminder.quantity} ${reminder.unit}',
+                            'Кількість порцій: ${reminder.quantity} (${reminder.activeIngredientAmount} ${reminder.unit})',
                           ),
                         ],
                       ),

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+/*using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api.Models
@@ -24,4 +24,4 @@ namespace api.Models
         [ForeignKey("SupplementID")]
         public virtual Supplement Supplement { get; set; } = null!;
     }
-} 
+} */

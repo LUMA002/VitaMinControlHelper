@@ -31,9 +31,9 @@ namespace api.Models
         [JsonIgnore]
         public virtual ICollection<SupplementTypeRelation> TypeRelations { get; set; } = new List<SupplementTypeRelation>();
         
-        [JsonIgnore]
+/*        [JsonIgnore]
         public virtual ICollection<UserSupplement> UserSupplements { get; set; } = new List<UserSupplement>();
-        
+        */
         [JsonIgnore]
         public virtual ICollection<IntakeLog> IntakeLogs { get; set; } = new List<IntakeLog>();
     }

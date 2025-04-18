@@ -1,6 +1,8 @@
-// lib/utils/constants.dart
 
 // This file contains global constants used throughout the application
+
+
+// !!!!! Make a refuctor to use the constants in the app !!!!!
 
 // API configuration
 class ApiConfig {

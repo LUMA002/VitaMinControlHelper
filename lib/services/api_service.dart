@@ -6,7 +6,8 @@ import 'package:vita_min_control_helper/features/auth/providers/auth_provider.da
 class ApiService {
   final Dio _dio;
   final Ref _ref;
-  final String _baseUrl = 'http://10.0.2.2:5241/api'; // Важлива зміна, не використовувати localhost
+  // Важлива зміна змінної, не використовувати localhost!!!
+  final String _baseUrl = 'http://10.0.2.2:5241/api'; 
 
   // Make baseUrl accessible via a getter
   String get baseUrl => _baseUrl;

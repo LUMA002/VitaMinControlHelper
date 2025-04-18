@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+/* import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vita_min_control_helper/utils/constants.dart';
 
@@ -8,10 +8,10 @@ class ApiHelper {
 
   ApiHelper() {
     _dio.options.baseUrl = ApiConfig.baseUrl;
-    _dio.options.connectTimeout = Duration(
+    _dio.options.connectTimeout = const Duration(
       milliseconds: ApiConfig.connectionTimeout,
     );
-    _dio.options.receiveTimeout = Duration(
+    _dio.options.receiveTimeout = const Duration(
       milliseconds: ApiConfig.receiveTimeout,
     );
 
@@ -93,3 +93,4 @@ class ApiHelper {
     }
   }
 }
+ */

@@ -21,9 +21,9 @@ namespace api.Models
         [JsonIgnore]
         public virtual ICollection<Supplement> CreatedSupplements { get; set; } = new List<Supplement>();
         
-        [JsonIgnore]
+    /*    [JsonIgnore]
         public virtual ICollection<UserSupplement> UserSupplements { get; set; } = new List<UserSupplement>();
-        
+        */
         [JsonIgnore]
         public virtual ICollection<IntakeLog> IntakeLogs { get; set; } = new List<IntakeLog>();
     }

@@ -75,6 +75,51 @@ class SupplementRepository {
     }
   }
 
+  Future<Supplement> addSupplement(Supplement supplement) async {
+    try {
+      final apiService = _ref.read(apiServiceProvider);
+      final dio = Dio();
+
+      // Extract relevant data for the API
+      final Map<String, dynamic> data = {
+        'name': supplement.name,
+        'description': supplement.description,
+        'deficiencySymptoms': supplement.deficiencySymptoms,
+        'typeIds': supplement.types.map((type) => type.id).toList(),
+        'isGlobal': false, // Always false for user-created supplements
+        'creatorId': supplement.creatorId,
+      };
+
+      final response = await dio.post(
+        '${apiService.baseUrl}/Supplements',
+        data: data,
+        options: Options(
+          headers: {'Authorization': 'Bearer ${_ref.read(authProvider).token}'},
+          validateStatus:
+              (status) => status! < 500, // Accept 4xx errors for debugging
+        ),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        print('Successfully added supplement: ${response.data}');
+        // Return the supplement with the ID from the server
+        final supplementFromServer = Supplement.fromJson(response.data);
+        return supplementFromServer;
+      } else {
+        print(
+          'Failed to add supplement: ${response.statusCode}, ${response.data}',
+        );
+        // If API returns error but we can still use the local supplement
+        return supplement;
+      }
+    } catch (e) {
+      print('Exception when adding supplement: $e');
+      // If there's an error with the API, we'll store the supplement locally
+      // In a real implementation, you'd want to add this to a local database and sync later
+      return supplement; // Return the original supplement for now
+    }
+  }
+
   Future<void> updateSupplement(
     String id,
     String name, {

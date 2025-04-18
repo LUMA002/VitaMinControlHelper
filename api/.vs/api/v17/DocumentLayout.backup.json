@@ -3,8 +3,68 @@
   "WorkspaceRootPath": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\supplement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\supplement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\mappers\\usersupplementmappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:mappers\\usersupplementmappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementtypescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\supplementtypescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\intakelogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\intakelogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\dtos\\usersupplement\\usersupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:dtos\\usersupplement\\usersupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\dtos\\usersupplement\\addusersupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:dtos\\usersupplement\\addusersupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\usersupplement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\usersupplement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\supplementtyperelation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\supplementtyperelation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\supplementtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\supplementtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\models\\intakelog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\intakelog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -13,10 +73,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementtypescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\supplementtypescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\dtos\\auth\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -35,14 +91,6 @@
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:dtos\\auth\\authresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\intakelogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\intakelogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
     },
@@ -58,110 +106,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "api",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
-              "RelativeDocumentMoniker": "api.csproj",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
-              "RelativeToolTip": "api.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-16T16:43:28.74Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "UserDto.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\UserDto.cs",
-              "RelativeDocumentMoniker": "DTOs\\Auth\\UserDto.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\UserDto.cs",
-              "RelativeToolTip": "DTOs\\Auth\\UserDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "UserSupplementMappers.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Mappers\\UserSupplementMappers.cs",
+              "RelativeDocumentMoniker": "Mappers\\UserSupplementMappers.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Mappers\\UserSupplementMappers.cs",
+              "RelativeToolTip": "Mappers\\UserSupplementMappers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T16:27:11.029Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "RegisterDto.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\RegisterDto.cs",
-              "RelativeDocumentMoniker": "DTOs\\Auth\\RegisterDto.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\RegisterDto.cs",
-              "RelativeToolTip": "DTOs\\Auth\\RegisterDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T16:27:00.632Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAABoAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T11:01:55.703Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LoginDto.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\LoginDto.cs",
-              "RelativeDocumentMoniker": "DTOs\\Auth\\LoginDto.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\LoginDto.cs",
-              "RelativeToolTip": "DTOs\\Auth\\LoginDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T16:26:57.725Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AuthResponseDto.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\AuthResponseDto.cs",
-              "RelativeDocumentMoniker": "DTOs\\Auth\\AuthResponseDto.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\AuthResponseDto.cs",
-              "RelativeToolTip": "DTOs\\Auth\\AuthResponseDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T16:26:55.857Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "IntakeLogsController.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\IntakeLogsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\IntakeLogsController.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\IntakeLogsController.cs",
-              "RelativeToolTip": "Controllers\\IntakeLogsController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAQwDcAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T14:17:18.881Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SupplementTypesController.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementTypesController.cs",
-              "RelativeDocumentMoniker": "Controllers\\SupplementTypesController.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementTypesController.cs",
-              "RelativeToolTip": "Controllers\\SupplementTypesController.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAkwDIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T14:16:29.051Z",
+              "WhenOpened": "2025-04-18T14:36:03.011Z",
               "EditorCaption": ""
             },
             {
@@ -175,6 +132,261 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "UserSupplementsController.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\UserSupplementsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserSupplementsController.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\UserSupplementsController.cs",
+              "RelativeToolTip": "Controllers\\UserSupplementsController.cs",
+              "ViewState": "AgIAAIoAAAAAAAAAAAAAAJ0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T20:12:32.201Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SupplementTypesController.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementTypesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\SupplementTypesController.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementTypesController.cs",
+              "RelativeToolTip": "Controllers\\SupplementTypesController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAzwDIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T14:16:29.051Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SupplementsController.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\SupplementsController.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementsController.cs",
+              "RelativeToolTip": "Controllers\\SupplementsController.cs",
+              "ViewState": "AgIAALQAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T20:12:11.891Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAABoAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T11:01:55.703Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Supplement.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\Supplement.cs",
+              "RelativeDocumentMoniker": "Models\\Supplement.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\Supplement.cs",
+              "RelativeToolTip": "Models\\Supplement.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowCMAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T10:55:51.943Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDBContext.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Data\\ApplicationDBContext.cs",
+              "RelativeDocumentMoniker": "Data\\ApplicationDBContext.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Data\\ApplicationDBContext.cs",
+              "RelativeToolTip": "Data\\ApplicationDBContext.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAgwA0AAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T11:03:21.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IntakeLogsController.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\IntakeLogsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\IntakeLogsController.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\IntakeLogsController.cs",
+              "RelativeToolTip": "Controllers\\IntakeLogsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T14:17:18.881Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAAFwAAAAAAAAAAAAgwA0AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T20:11:51.004Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserSupplementDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\UserSupplementDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\UserSupplement\\UserSupplementDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\UserSupplementDto.cs",
+              "RelativeToolTip": "DTOs\\UserSupplement\\UserSupplementDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:33:16.566Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AddUserSupplementDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\AddUserSupplementDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\UserSupplement\\AddUserSupplementDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\AddUserSupplementDto.cs",
+              "RelativeToolTip": "DTOs\\UserSupplement\\AddUserSupplementDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:33:04.526Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:31:51.901Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "UserSupplement.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\UserSupplement.cs",
+              "RelativeDocumentMoniker": "Models\\UserSupplement.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\UserSupplement.cs",
+              "RelativeToolTip": "Models\\UserSupplement.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:30:31.24Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "SupplementTypeRelation.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementTypeRelation.cs",
+              "RelativeDocumentMoniker": "Models\\SupplementTypeRelation.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementTypeRelation.cs",
+              "RelativeToolTip": "Models\\SupplementTypeRelation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:30:44.218Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "SupplementType.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementType.cs",
+              "RelativeDocumentMoniker": "Models\\SupplementType.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementType.cs",
+              "RelativeToolTip": "Models\\SupplementType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:30:50.862Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IntakeLog.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\IntakeLog.cs",
+              "RelativeDocumentMoniker": "Models\\IntakeLog.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\IntakeLog.cs",
+              "RelativeToolTip": "Models\\IntakeLog.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T14:31:14.412Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "AuthResponseDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\AuthResponseDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\Auth\\AuthResponseDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\AuthResponseDto.cs",
+              "RelativeToolTip": "DTOs\\Auth\\AuthResponseDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T16:26:55.857Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "LoginDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\LoginDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\Auth\\LoginDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\LoginDto.cs",
+              "RelativeToolTip": "DTOs\\Auth\\LoginDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T16:26:57.725Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\Auth\\RegisterDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\RegisterDto.cs",
+              "RelativeToolTip": "DTOs\\Auth\\RegisterDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T16:27:00.632Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "UserDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\UserDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\Auth\\UserDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\UserDto.cs",
+              "RelativeToolTip": "DTOs\\Auth\\UserDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-16T16:27:11.029Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "api.csproj",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
+              "RelativeDocumentMoniker": "api.csproj",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
+              "RelativeToolTip": "api.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-16T16:43:28.74Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -182,37 +394,22 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-16T11:00:13.12Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T11:00:13.12Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 23,
               "Title": "api",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
               "RelativeDocumentMoniker": "api.csproj",
               "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
               "RelativeToolTip": "api.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-16T13:37:04.618Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T13:37:04.618Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ApplicationDBContext.cs",
-              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Data\\ApplicationDBContext.cs",
-              "RelativeDocumentMoniker": "Data\\ApplicationDBContext.cs",
-              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Data\\ApplicationDBContext.cs",
-              "RelativeToolTip": "Data\\ApplicationDBContext.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAswAkAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T11:03:21.651Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 22,
               "Title": "api.http",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.http",
               "RelativeDocumentMoniker": "api.http",
@@ -220,8 +417,7 @@
               "RelativeToolTip": "api.http",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-04-16T10:36:03.791Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T10:36:03.791Z"
             }
           ]
         }

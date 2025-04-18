@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class main_init : Migration
+    public partial class thirdTryInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -250,33 +250,6 @@ namespace api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "UserSupplements",
-                columns: table => new
-                {
-                    UserSupplementID = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserID = table.Column<string>(type: "text", nullable: false),
-                    SupplementID = table.Column<Guid>(type: "uuid", nullable: false),
-                    DefaultDosage = table.Column<double>(type: "double precision", nullable: true),
-                    DefaultUnit = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserSupplements", x => x.UserSupplementID);
-                    table.ForeignKey(
-                        name: "FK_UserSupplements_AspNetUsers_UserID",
-                        column: x => x.UserID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserSupplements_Supplements_SupplementID",
-                        column: x => x.SupplementID,
-                        principalTable: "Supplements",
-                        principalColumn: "SupplementID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -350,16 +323,6 @@ namespace api.Migrations
                 table: "SupplementTypes",
                 column: "Name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSupplements_SupplementID",
-                table: "UserSupplements",
-                column: "SupplementID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSupplements_UserID",
-                table: "UserSupplements",
-                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -385,9 +348,6 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "SupplementTypeRelations");
-
-            migrationBuilder.DropTable(
-                name: "UserSupplements");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

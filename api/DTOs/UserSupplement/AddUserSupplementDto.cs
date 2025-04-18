@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+/*using System.ComponentModel.DataAnnotations;
 
 namespace api.DTOs.UserSupplement
 {
@@ -12,4 +12,4 @@ namespace api.DTOs.UserSupplement
         [StringLength(50)]
         public string? DefaultUnit { get; set; }
     }
-} 
+} */

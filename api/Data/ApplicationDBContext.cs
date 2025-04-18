@@ -13,7 +13,7 @@ namespace api.Data
         public DbSet<Supplement> Supplements { get; set; }
         public DbSet<SupplementType> SupplementTypes { get; set; }
         public DbSet<SupplementTypeRelation> SupplementTypeRelations { get; set; }
-        public DbSet<UserSupplement> UserSupplements { get; set; }
+       // public DbSet<UserSupplement> UserSupplements { get; set; }
         public DbSet<IntakeLog> IntakeLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

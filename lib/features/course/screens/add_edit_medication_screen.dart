@@ -5,9 +5,11 @@ import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
+import 'package:vita_min_control_helper/features/course/screens/add_custom_supplement_screen.dart';
 
 class AddEditMedicationScreen extends ConsumerStatefulWidget {
-  final Reminder? reminder; // глянути цей ремайндер, звідки прийшов і з чим саме
+  final Reminder?
+  reminder; // глянути цей ремайндер, звідки прийшов і з чим саме
 
   const AddEditMedicationScreen({super.key, this.reminder});
 
@@ -24,11 +26,16 @@ class _AddEditMedicationScreenState
   String? _error;
 
   String? _selectedSupplementId;
+  ReminderFrequency? _frequency = ReminderFrequency.daily;
   TimeOfDay _timeToTake = const TimeOfDay(hour: 8, minute: 0);
   final _quantityController = TextEditingController(text: '1');
-  final _unitController = TextEditingController(text: 'таблетка');
-  final _stockAmountController = TextEditingController(text: '30');
+
+  final _stockAmountController = TextEditingController();
+  final _activeIngredientController = TextEditingController();
+  String _measurementUnit = 'мг';
   final bool _showTimePicker = true;
+
+  final List<String> _measurementUnits = ['мг', 'мкг', 'г', 'мл', 'МО', 'КУО'];
 
   @override
   void initState() {
@@ -53,13 +60,24 @@ class _AddEditMedicationScreenState
 
       if (widget.reminder != null) {
         _selectedSupplementId = widget.reminder!.supplementId;
+        if (widget.reminder!.frequency != null) {
+          _frequency = widget.reminder!.frequency;
+        }
         if (widget.reminder!.timeToTake != null) {
           _timeToTake = widget.reminder!.timeToTake!;
         }
         _quantityController.text = widget.reminder!.quantity.toString();
-        _unitController.text = widget.reminder!.unit;
-        _stockAmountController.text = widget.reminder!.stockAmount.toString();
-
+        _measurementUnit = widget.reminder!.unit;
+        if (widget.reminder!.stockAmount > 0) {
+          _stockAmountController.text = widget.reminder!.stockAmount.toString();
+        }
+        if (widget.reminder!.activeIngredientAmount != null) {
+          _activeIngredientController.text =
+              widget.reminder!.activeIngredientAmount.toString();
+        }
+        if (widget.reminder!.measurementUnit != null) {
+          _measurementUnit = widget.reminder!.measurementUnit!;
+        }
       }
     } catch (e) {
       setState(() {
@@ -72,8 +90,8 @@ class _AddEditMedicationScreenState
   @override
   void dispose() {
     _quantityController.dispose();
-    _unitController.dispose();
     _stockAmountController.dispose();
+    _activeIngredientController.dispose();
     super.dispose();
   }
 
@@ -105,17 +123,34 @@ class _AddEditMedicationScreenState
           id: widget.reminder?.id ?? const Uuid().v4(),
           userId: userId,
           supplementId: _selectedSupplementId!,
-       //   frequency: _frequency,
+          frequency: _frequency!,
           timeToTake: _showTimePicker ? _timeToTake : null,
           quantity: double.parse(_quantityController.text),
-          unit: _unitController.text,
-          stockAmount: int.parse(_stockAmountController.text),
+          unit: _measurementUnit,
+          stockAmount:
+              _stockAmountController.text.isNotEmpty
+                  ? int.parse(_stockAmountController.text)
+                  : 0,
           isConfirmed: false,
           nextReminder: DateTime.now(),
+          activeIngredientAmount:
+              _activeIngredientController.text.isNotEmpty
+                  ? double.parse(_activeIngredientController.text)
+                  : null,
+          measurementUnit:
+              _activeIngredientController.text.isNotEmpty
+                  ? _measurementUnit
+                  : null,
         );
 
-        // Store it locally - in a real implementation you'd use a local database
-        // For now, we'll just return to the previous screen with the new reminder
+        // Для реального додатку, тут має бути збереження у репозиторій
+        // Наприклад:
+        // final reminderRepo = ref.read(reminderRepositoryProvider);
+        // await reminderRepo.saveReminder(newReminder);
+
+        // Для цілей відладки виведемо інформацію
+        print('Зберігаємо нагадування: ${newReminder.toJson()}');
+
         if (mounted) {
           Navigator.pop(context, newReminder);
         }
@@ -136,7 +171,7 @@ class _AddEditMedicationScreenState
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const Text('AddCustomSupplementScreen'),//const AddCustomSupplementScreen(),
+        builder: (context) => const AddCustomSupplementScreen(),
       ),
     );
 
@@ -234,6 +269,43 @@ class _AddEditMedicationScreenState
               ],
             ),
 
+            const SizedBox(height: 16),
+
+            // Frequency dropdown
+            DropdownButtonFormField<ReminderFrequency>(
+              decoration: const InputDecoration(
+                labelText: 'Частота нагадувань',
+                border: OutlineInputBorder(),
+              ),
+              value: _frequency,
+              items:
+                  ReminderFrequency.values.map((frequency) {
+                    String text;
+                    switch (frequency) {
+                      case ReminderFrequency.daily:
+                        text = 'Щодня';
+                        break;
+                      case ReminderFrequency.weekly:
+                        text = 'Щотижня';
+                        break;
+                      case ReminderFrequency.monthly:
+                        text = 'Щомісяця';
+                        break;
+                      case ReminderFrequency.asNeeded:
+                        text = 'За потребою';
+                        break;
+                    }
+                    return DropdownMenuItem<ReminderFrequency>(
+                      value: frequency,
+                      child: Text(text),
+                    );
+                  }).toList(),
+              onChanged: (ReminderFrequency? value) {
+                setState(() {
+                  _frequency = value;
+                });
+              },
+            ),
 
             const SizedBox(height: 16),
 
@@ -241,13 +313,13 @@ class _AddEditMedicationScreenState
             TextFormField(
               controller: _quantityController,
               decoration: const InputDecoration(
-                labelText: 'Кількість',
+                labelText: 'Кількість порцій',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Будь ласка, введіть кількість';
+                  return 'Будь ласка, введіть кількість порцій';
                 }
                 if (double.tryParse(value) == null ||
                     double.parse(value) <= 0) {
@@ -257,13 +329,13 @@ class _AddEditMedicationScreenState
               },
             ),
 
-            const SizedBox(height: 16),
+          /*   const SizedBox(height: 16),
 
             // Unit field
             TextFormField(
               controller: _unitController,
               decoration: const InputDecoration(
-                labelText: 'Одиниця виміру',
+                labelText: 'Одиниця виміру порції',
                 border: OutlineInputBorder(),
               ),
               validator: (value) {
@@ -273,6 +345,57 @@ class _AddEditMedicationScreenState
                 return null;
               },
             ),
+ */
+            const SizedBox(height: 16),
+
+            // Active ingredient amount
+            TextFormField(
+              controller: _activeIngredientController,
+              decoration: const InputDecoration(
+                labelText: 'Кількість діючої речовини',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Будь ласка, введіть кількість діючої речовини';
+                }
+                if (value.isNotEmpty) {
+                  if (double.tryParse(value) == null ||
+                      double.parse(value) <= 0) {
+                    return 'Введіть коректне число';
+                  }
+                }
+                return null;
+              },  
+            ),
+
+            const SizedBox(height: 16),
+
+            // Measurement unit dropdown
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Одиниця виміру',
+                border: OutlineInputBorder(),
+              ),
+              value: _measurementUnit,
+              items:
+                  _measurementUnits.map((unit) {
+                    return DropdownMenuItem<String>(
+                      value: unit,
+                      child: Text(unit),
+                    );
+                  }).toList(),
+              onChanged: (String? value) {
+                if (value != null) {
+                  setState(() {
+                    _measurementUnit = value;
+                  });
+                }
+              },
+            ),
 
             const SizedBox(height: 16),
 
@@ -280,24 +403,20 @@ class _AddEditMedicationScreenState
             TextFormField(
               controller: _stockAmountController,
               decoration: const InputDecoration(
-                labelText: 'Залишок (кількість)',
+                labelText: 'Залишок (кількість порцій)',
+                hintText: 'Необов\'язкове поле',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Будь ласка, введіть кількість, що залишилась';
-                }
-                if (int.tryParse(value) == null || int.parse(value) < 0) {
-                  return 'Введіть коректне число';
+                if (value != null && value.isNotEmpty) {
+                  if (int.tryParse(value) == null || int.parse(value) < 0) {
+                    return 'Введіть коректне число';
+                  }
                 }
                 return null;
               },
             ),
-
-            const SizedBox(height: 16),
-
-            // Frequency selection
 
             const SizedBox(height: 16),
 
