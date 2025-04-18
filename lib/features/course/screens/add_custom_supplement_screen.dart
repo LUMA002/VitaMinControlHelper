@@ -1,17 +1,20 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/models/supplement_form.dart';
 import 'package:vita_min_control_helper/data/models/supplement_type.dart';
-import 'package:vita_min_control_helper/data/repositories/mock_data.dart';
+import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 
-class AddCustomSupplementScreen extends StatefulWidget {
+class AddCustomSupplementScreen extends ConsumerStatefulWidget {
   const AddCustomSupplementScreen({super.key});
 
   @override
-  State<AddCustomSupplementScreen> createState() => _AddCustomSupplementScreenState();
+  ConsumerState<AddCustomSupplementScreen> createState() =>
+      _AddCustomSupplementScreenState();
 }
 
-class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
+class _AddCustomSupplementScreenState
+    extends ConsumerState<AddCustomSupplementScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -19,13 +22,39 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
   final _deficiencySymptomsController = TextEditingController();
   final _overdoseSymptomsController = TextEditingController();
   bool _isMedication = false;
+  bool _isLoading = true;
+  String? _error;
 
   final List<SupplementType> _selectedTypes = [];
   final List<SupplementForm> _selectedForms = [];
+  List<SupplementType> _availableTypes = [];
 
   @override
   void initState() {
     super.initState();
+    _loadSupplementTypes();
+  }
+
+  Future<void> _loadSupplementTypes() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final supplementRepo = ref.read(supplementRepositoryProvider);
+      final types = await supplementRepo.getSupplementTypes();
+
+      setState(() {
+        _availableTypes = types;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Помилка завантаження типів: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -38,32 +67,82 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
     super.dispose();
   }
 
-  void _saveCustomSupplement() {
+  Future<void> _saveCustomSupplement() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Створюємо новий препарат
-      final newSupplement = Supplement(
-        name: _nameController.text,
-        description: _descriptionController.text.isEmpty 
-            ? null : _descriptionController.text,
-        deficiencySymptoms: _deficiencySymptomsController.text.isEmpty 
-            ? null : _deficiencySymptomsController.text,
-        types: _selectedTypes,
-      );
-      
-      // Додаємо до списку препаратів (в реальному додатку тут був би код для збереження в БД)
+      setState(() {
+        _isLoading = true;
+      });
 
-      
-      // Повертаємось на попередній екран з новим препаратом
-      Navigator.pop(context, newSupplement);
+      try {
+        // Get the repository
+        final supplementRepo = ref.read(supplementRepositoryProvider);
+
+        // Create the supplement
+        final newSupplement = await supplementRepo.createSupplement(
+          _nameController.text,
+          description:
+              _descriptionController.text.isEmpty
+                  ? null
+                  : _descriptionController.text,
+          deficiencySymptoms:
+              _deficiencySymptomsController.text.isEmpty
+                  ? null
+                  : _deficiencySymptomsController.text,
+          typeIds: _selectedTypes.map((type) => type.id).toList(),
+          isGlobal: false,
+        );
+
+        // Return to previous screen with the new supplement
+        if (mounted) {
+          Navigator.pop(context, newSupplement);
+        }
+      } catch (e) {
+        setState(() {
+          _error = 'Помилка збереження: ${e.toString()}';
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_error!), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Додати свій препарат')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Додати свій препарат')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadSupplementTypes,
+                child: const Text('Спробувати знову'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Додати свій препарат'),
-      ),
+      appBar: AppBar(title: const Text('Додати свій препарат')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -83,9 +162,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Поле для опису препарату
             TextFormField(
               controller: _descriptionController,
@@ -95,9 +174,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
               ),
               maxLines: 3,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Поле для рекомендованого дозування
             TextFormField(
               controller: _dosageController,
@@ -106,9 +185,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Поле для симптомів дефіциту
             TextFormField(
               controller: _deficiencySymptomsController,
@@ -118,9 +197,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
               ),
               maxLines: 2,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Поле для симптомів передозування
             TextFormField(
               controller: _overdoseSymptomsController,
@@ -130,9 +209,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
               ),
               maxLines: 2,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Перемикач для типу препарату (медикамент або добавка)
             SwitchListTile(
               title: const Text('Це медикамент'),
@@ -144,9 +223,9 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
                 });
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Вибір типів препарату
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,62 +238,29 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 4.0,
-                  children: MockData.supplementTypes.map((type) {
-                    final isSelected = _selectedTypes.contains(type);
-                    return FilterChip(
-                      label: Text(type.name),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedTypes.add(type);
-                          } else {
-                            _selectedTypes.remove(type);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      _availableTypes.map((type) {
+                        final isSelected = _selectedTypes.contains(type);
+                        return FilterChip(
+                          label: Text(type.name),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedTypes.add(type);
+                              } else {
+                                _selectedTypes.remove(type);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                 ),
               ],
             ),
-            
-            const SizedBox(height: 16),
-            
-            // Вибір форм випуску
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Форма випуску:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 4.0,
-                  children: MockData.supplementForms.map((form) {
-                    final isSelected = _selectedForms.contains(form);
-                    return FilterChip(
-                      label: Text(form.name),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedForms.add(form);
-                          } else {
-                            _selectedForms.remove(form);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Кнопка збереження
             ElevatedButton(
               onPressed: _saveCustomSupplement,
@@ -232,3 +278,4 @@ class _AddCustomSupplementScreenState extends State<AddCustomSupplementScreen> {
     );
   }
 }
+ */

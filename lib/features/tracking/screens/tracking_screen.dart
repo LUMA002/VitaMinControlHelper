@@ -1,38 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
-import 'package:vita_min_control_helper/data/repositories/mock_data.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
+import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
+import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
+import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
+import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class TrackingScreen extends StatefulWidget {
+class TrackingScreen extends ConsumerStatefulWidget {
   const TrackingScreen({super.key});
 
   @override
-  State<TrackingScreen> createState() => _TrackingScreenState();
+  ConsumerState<TrackingScreen> createState() => _TrackingScreenState();
 }
 
-class _TrackingScreenState extends State<TrackingScreen> {
-  late List<Reminder> _reminders;
-  late List<Supplement> _supplements;
-  late DateTime _selectedWeek;
-  late String _selectedPeriod = 'Тиждень';
-  late String? _selectedSupplementId;
+class _TrackingScreenState extends ConsumerState<TrackingScreen> {
+  List<Reminder> _reminders = [];
+  List<Supplement> _supplements = [];
+  List<IntakeLog> _intakeLogs = [];
+  DateTime _selectedWeek = DateTime.now();
+  String _selectedPeriod = 'Тиждень';
+  String? _selectedSupplementId;
+  bool _isLoading = true;
+  String? _error;
 
   final List<String> _periods = ['Тиждень', 'Місяць', 'Рік'];
 
   @override
   void initState() {
     super.initState();
-    _selectedWeek = DateTime.now();
     _loadData();
-    _selectedSupplementId = null;
   }
 
-  void _loadData() {
-    _reminders = MockData.getReminders(MockData.defaultUser.id);
-    _supplements = MockData.allSupplements;
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      // Load supplements from the API
+      final supplementRepo = ref.read(supplementRepositoryProvider);
+      final intakeRepo = ref.read(intakeRepositoryProvider);
+
+      final supplements = await supplementRepo.getSupplements();
+
+     // final intakeLogs = await intakeRepo.getIntakeLogs();
+
+      // Load reminders from local storage
+      await _loadLocalReminders();
+
+      setState(() {
+        _supplements = supplements;
+
+      //  _intakeLogs = intakeLogs;
+
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Помилка завантаження даних: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadLocalReminders() async {
+    try {
+      // Get the current user ID
+      final authState = ref.read(authProvider);
+      final userId = authState.userId ?? 'guest-user';
+
+      // Load from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
+
+      // Parse reminders
+      final reminders =
+          remindersJson
+              .map((json) => Reminder.fromJson(jsonDecode(json)))
+              .toList();
+
+      // Update state
+      setState(() {
+        _reminders = reminders;
+      });
+
+      // Also update the provider
+      ref.read(localRemindersProvider.notifier).state = reminders;
+    } catch (e) {
+      print('Error loading local reminders: $e');
+      // Return empty list in case of error
+      setState(() {
+        _reminders = [];
+      });
+    }
   }
 
   List<DateTime> _getWeekDays() {
@@ -51,15 +118,20 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
   bool _wasIntakeTaken(Reminder reminder, DateTime date) {
-    // В реальному додатку тут буде перевірка з бази даних
-    // Зараз просто випадкове значення для демонстрації
-    return reminder.isConfirmed && reminder.nextReminder?.day == date.day;
+    // Check if there's an intake log for this reminder on this date
+    return _intakeLogs.any(
+      (log) =>
+          log.userSupplementId == reminder.supplementId &&
+          log.createdAt.year == date.year &&
+          log.createdAt.month == date.month &&
+          log.createdAt.day == date.day,
+    );
   }
 
   List<IntakeLog> _getFilteredLogs() {
     final now = DateTime.now();
     final filtered =
-        MockData.getIntakeLogs(MockData.defaultUser.id).where((log) {
+        _intakeLogs.where((log) {
           // Filter by supplement if one is selected
           if (_selectedSupplementId != null &&
               log.userSupplementId != _selectedSupplementId) {
@@ -69,7 +141,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
           // Filter by period
           switch (_selectedPeriod) {
             case 'Тиждень':
-              return log.createdAt.isAfter(now.subtract(const Duration(days: 7)));
+              return log.createdAt.isAfter(
+                now.subtract(const Duration(days: 7)),
+              );
             case 'Місяць':
               return log.createdAt.isAfter(
                 now.subtract(const Duration(days: 30)),
@@ -144,6 +218,30 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadData,
+              child: const Text('Спробувати знову'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final weekDays = _getWeekDays();
     final theme = Theme.of(context);
     final filteredLogs = _getFilteredLogs();
@@ -153,25 +251,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
     return _reminders.isEmpty
         ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: 
               Text(
                 'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge,
               ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Navigate to CourseScreen
-                  Navigator.pushNamed(context, '/course');
-                },
-                icon: const Icon(Icons.medication),
-                label: const Text('Перейти до курсу'),
-              ),
-            ],
-          ),
         )
         : Column(
           children: [

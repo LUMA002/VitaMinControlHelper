@@ -1,18 +1,18 @@
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
-enum ReminderFrequency {
+// Пізніше можна буде реалізувати enum та відповідний фуенкціонал для визначення частоти нагадувань
+/* enum ReminderFrequency {
   daily,
   weekly,
   asNeeded,
 }
-
+ */
 class Reminder {
   final String id;
   final String userId;
   final String supplementId;
-  final String? formId;
-  final ReminderFrequency frequency;
+  // final ReminderFrequency frequency;
   final TimeOfDay? timeToTake;
   final double quantity;
   final String unit;
@@ -24,8 +24,7 @@ class Reminder {
     String? id,
     required this.userId,
     required this.supplementId,
-    this.formId,
-    required this.frequency,
+   // required this.frequency,
     this.timeToTake,
     required this.quantity,
     required this.unit,
@@ -39,8 +38,7 @@ class Reminder {
       id: json['id'],
       userId: json['userId'],
       supplementId: json['supplementId'],
-      formId: json['formId'],
-      frequency: ReminderFrequency.values.byName(json['frequency']),
+    //  frequency: ReminderFrequency.values.byName(json['frequency']),
       timeToTake: json['timeToTake'] != null
           ? TimeOfDay(
               hour: int.parse(json['timeToTake'].split(':')[0]),
@@ -62,8 +60,7 @@ class Reminder {
       'id': id,
       'userId': userId,
       'supplementId': supplementId,
-      'formId': formId,
-      'frequency': frequency.name,
+      //'frequency': frequency.name,
       'timeToTake': timeToTake != null
           ? '${timeToTake!.hour.toString().padLeft(2, '0')}:${timeToTake!.minute.toString().padLeft(2, '0')}'
           : null,
@@ -78,7 +75,7 @@ class Reminder {
   Reminder copyWith({
     String? supplementId,
     String? formId,
-    ReminderFrequency? frequency,
+  //  ReminderFrequency? frequency,
     TimeOfDay? timeToTake,
     double? quantity,
     String? unit,
@@ -90,8 +87,7 @@ class Reminder {
       id: id,
       userId: userId,
       supplementId: supplementId ?? this.supplementId,
-      formId: formId ?? this.formId,
-      frequency: frequency ?? this.frequency,
+     // frequency: frequency ?? this.frequency,
       timeToTake: timeToTake ?? this.timeToTake,
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
-import 'package:vita_min_control_helper/data/models/user.dart';
+
 
 class ApiService {
   final Dio _dio;

@@ -9,7 +9,8 @@ import 'package:vita_min_control_helper/features/home/screens/home_tab.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
 import 'package:vita_min_control_helper/features/tracking/screens/tracking_screen.dart';
 import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_screen.dart';
-import 'package:vita_min_control_helper/shared/widgets/guest_mode_dialog.dart';
+import 'package:vita_min_control_helper/features/course/screens/add_edit_medication_screen.dart';
+import 'package:vita_min_control_helper/data/models/reminder.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -21,7 +22,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/home',
     navigatorKey: _rootNavigatorKey,
-
+    debugLogDiagnostics: true, // Додаємо логування для налагодження
     redirect: (context, state) {
       final isLoggedIn = authState.isLoggedIn;
       final isGuest = authState.isGuest;
@@ -60,36 +61,69 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
-          return HomeScreen(initialTabIndex: 0,
-          );
+          // Extract initialTabIndex from routes
+          int initialTabIndex = 0;
+          final location = state.uri.path;
+          if (location == '/course') {
+            initialTabIndex = 2;
+          } else if (location == '/tracking') {
+            initialTabIndex = 1;
+          } else if (location == '/knowledge') {
+            initialTabIndex = 3;
+          }
+
+          return HomeScreen(initialTabIndex: initialTabIndex);
         },
         routes: [
           // Home tab
           GoRoute(
             path: '/home',
-            builder: (context, state) => const HomeScreen(initialTabIndex: 0),
+            builder: (context, state) => const HomeTab(),
           ),
           // Course tab
           GoRoute(
             path: '/course',
-            builder: (context, state) => const HomeScreen(initialTabIndex: 2),
+            builder: (context, state) => const CourseScreen(),
           ),
           GoRoute(
             path: '/tracking',
-            builder: (context, state) => const HomeScreen(initialTabIndex: 1),
+            builder: (context, state) => const TrackingScreen(),
           ),
-          // Knowledge tab - доступно для всіх користувачів
+          // Knowledge tab
           GoRoute(
             path: '/knowledge',
-            builder: (context, state) => const HomeScreen(initialTabIndex: 3),
+            builder: (context, state) => const KnowledgeScreen(),
           ),
         ],
+      ),
+
+      // Medication screens (outside the shell)
+      GoRoute(
+        path: '/add-medication',
+        builder: (context, state) => const AddEditMedicationScreen(),
+      ),
+      GoRoute(
+        path: '/edit-medication',
+        builder: (context, state) {
+          final reminder = state.extra as Reminder?;
+          return AddEditMedicationScreen(reminder: reminder);
+        },
       ),
     ],
     errorBuilder:
         (context, state) => Scaffold(
           body: Center(
-            child: Text('Сторінку не знайдено: ${state.matchedLocation}'),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Сторінку не знайдено: ${state.uri.path}'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => context.go('/home'),
+                  child: const Text('Повернутися на головну'),
+                ),
+              ],
+            ),
           ),
         ),
   );

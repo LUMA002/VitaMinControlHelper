@@ -34,7 +34,7 @@ class ReminderRepository {
 
   Future<Reminder> createReminder({
     required String userSupplementId,
-    required ReminderFrequency frequency,
+    //required ReminderFrequency frequency,
     TimeOfDay? timeToTake,
     required double quantity,
     required String unit,
@@ -46,7 +46,7 @@ class ReminderRepository {
 
       final Map<String, dynamic> data = {
         'userSupplementId': userSupplementId,
-        'frequency': frequency.toString().split('.').last,
+       // 'frequency': frequency.toString().split('.').last,
         'quantity': quantity,
         'unit': unit,
       };
@@ -80,7 +80,7 @@ class ReminderRepository {
 
   Future<void> updateReminder({
     required String id,
-    required ReminderFrequency frequency,
+    //required ReminderFrequency frequency,
     TimeOfDay? timeToTake,
     required double quantity,
     required String unit,
@@ -91,7 +91,7 @@ class ReminderRepository {
       final dio = Dio();
 
       final Map<String, dynamic> data = {
-        'frequency': frequency.toString().split('.').last,
+      //  'frequency': frequency.toString().split('.').last,
         'quantity': quantity,
         'unit': unit,
       };

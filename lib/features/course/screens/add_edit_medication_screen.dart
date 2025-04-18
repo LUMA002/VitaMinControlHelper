@@ -1,50 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
-import 'package:vita_min_control_helper/data/models/supplement_form.dart';
-import 'package:vita_min_control_helper/data/repositories/mock_data.dart';
-import 'package:vita_min_control_helper/features/course/screens/add_custom_supplement_screen.dart';
+import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
+import 'package:uuid/uuid.dart';
+import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
 
-class AddEditMedicationScreen extends StatefulWidget {
-  final Reminder? reminder;
+class AddEditMedicationScreen extends ConsumerStatefulWidget {
+  final Reminder? reminder; // глянути цей ремайндер, звідки прийшов і з чим саме
 
   const AddEditMedicationScreen({super.key, this.reminder});
 
   @override
-  State<AddEditMedicationScreen> createState() => _AddEditMedicationScreenState();
+  ConsumerState<AddEditMedicationScreen> createState() =>
+      _AddEditMedicationScreenState();
 }
 
-class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
+class _AddEditMedicationScreenState
+    extends ConsumerState<AddEditMedicationScreen> {
   final _formKey = GlobalKey<FormState>();
-  late List<Supplement> _supplements;
-  late List<SupplementForm> _supplementForms;
+  List<Supplement> _supplements = [];
+  bool _isLoading = true;
+  String? _error;
 
   String? _selectedSupplementId;
-  String? _selectedFormId;
-  ReminderFrequency _frequency = ReminderFrequency.daily;
   TimeOfDay _timeToTake = const TimeOfDay(hour: 8, minute: 0);
   final _quantityController = TextEditingController(text: '1');
   final _unitController = TextEditingController(text: 'таблетка');
   final _stockAmountController = TextEditingController(text: '30');
-  bool _showTimePicker = true;
+  final bool _showTimePicker = true;
 
   @override
   void initState() {
     super.initState();
-    _supplements = MockData.allSupplements;
-    _supplementForms = MockData.supplementForms;
+    _loadData();
+  }
 
-    if (widget.reminder != null) {
-      _selectedSupplementId = widget.reminder!.supplementId;
-      _selectedFormId = widget.reminder!.formId;
-      _frequency = widget.reminder!.frequency;
-      if (widget.reminder!.timeToTake != null) {
-        _timeToTake = widget.reminder!.timeToTake!;
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final supplementRepo = ref.read(supplementRepositoryProvider);
+      final supplements = await supplementRepo.getSupplements();
+
+      setState(() {
+        _supplements = supplements;
+        _isLoading = false;
+      });
+
+      if (widget.reminder != null) {
+        _selectedSupplementId = widget.reminder!.supplementId;
+        if (widget.reminder!.timeToTake != null) {
+          _timeToTake = widget.reminder!.timeToTake!;
+        }
+        _quantityController.text = widget.reminder!.quantity.toString();
+        _unitController.text = widget.reminder!.unit;
+        _stockAmountController.text = widget.reminder!.stockAmount.toString();
+
       }
-      _quantityController.text = widget.reminder!.quantity.toString();
-      _unitController.text = widget.reminder!.unit;
-      _stockAmountController.text = widget.reminder!.stockAmount.toString();
-      _showTimePicker = widget.reminder!.frequency != ReminderFrequency.asNeeded;
+    } catch (e) {
+      setState(() {
+        _error = 'Помилка завантаження даних: ${e.toString()}';
+        _isLoading = false;
+      });
     }
   }
 
@@ -54,15 +75,6 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
     _unitController.dispose();
     _stockAmountController.dispose();
     super.dispose();
-  }
-
-  void _onFrequencyChanged(ReminderFrequency? value) {
-    if (value != null) {
-      setState(() {
-        _frequency = value;
-        _showTimePicker = value != ReminderFrequency.asNeeded;
-      });
-    }
   }
 
   void _selectTime() async {
@@ -77,23 +89,62 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
     }
   }
 
-  void _saveReminder() {
+  Future<void> _saveReminder() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Here we would save the reminder to storage
-      // For now just pop back to course screen
-      Navigator.pop(context);
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+
+        // Get current user ID from auth provider
+        final authState = ref.read(authProvider);
+        final userId = authState.userId ?? 'guest-user';
+
+        // Create a reminder object locally
+        final newReminder = Reminder(
+          id: widget.reminder?.id ?? const Uuid().v4(),
+          userId: userId,
+          supplementId: _selectedSupplementId!,
+       //   frequency: _frequency,
+          timeToTake: _showTimePicker ? _timeToTake : null,
+          quantity: double.parse(_quantityController.text),
+          unit: _unitController.text,
+          stockAmount: int.parse(_stockAmountController.text),
+          isConfirmed: false,
+          nextReminder: DateTime.now(),
+        );
+
+        // Store it locally - in a real implementation you'd use a local database
+        // For now, we'll just return to the previous screen with the new reminder
+        if (mounted) {
+          Navigator.pop(context, newReminder);
+        }
+      } catch (e) {
+        setState(() {
+          _error = 'Помилка збереження: ${e.toString()}';
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_error!), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
   void _addCustomSupplement() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const AddCustomSupplementScreen()),
+      MaterialPageRoute(
+        builder: (context) => const Text('AddCustomSupplementScreen'),//const AddCustomSupplementScreen(),
+      ),
     );
-    
+
     if (result != null && result is Supplement) {
+      // Reload supplements to include the new one
+      _loadData();
+
       setState(() {
-        _supplements = MockData.allSupplements;
         _selectedSupplementId = result.id;
       });
     }
@@ -102,7 +153,41 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.reminder != null;
-    
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(isEditing ? 'Редагувати прийом' : 'Додати прийом'),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(isEditing ? 'Редагувати прийом' : 'Додати прийом'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadData,
+                child: const Text('Спробувати знову'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Редагувати прийом' : 'Додати прийом'),
@@ -122,12 +207,13 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                     border: OutlineInputBorder(),
                   ),
                   value: _selectedSupplementId,
-                  items: _supplements.map((supplement) {
-                    return DropdownMenuItem<String>(
-                      value: supplement.id,
-                      child: Text(supplement.name),
-                    );
-                  }).toList(),
+                  items:
+                      _supplements.map((supplement) {
+                        return DropdownMenuItem<String>(
+                          value: supplement.id,
+                          child: Text(supplement.name),
+                        );
+                      }).toList(),
                   onChanged: (String? value) {
                     setState(() {
                       _selectedSupplementId = value;
@@ -147,44 +233,10 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 ),
               ],
             ),
-            
+
+
             const SizedBox(height: 16),
-            
-            // Form dropdown
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Форма випуску',
-                border: OutlineInputBorder(),
-              ),
-              value: _selectedFormId,
-              items: _supplementForms.map((form) {
-                return DropdownMenuItem<String>(
-                  value: form.id,
-                  child: Text(form.name),
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                setState(() {
-                  _selectedFormId = value;
-                  
-                  // Update the unit based on selected form
-                  final selectedForm = _supplementForms.firstWhere(
-                    (form) => form.id == value,
-                    orElse: () => SupplementForm(name: 'таблетка'),
-                  );
-                  _unitController.text = selectedForm.name.toLowerCase();
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Будь ласка, оберіть форму випуску';
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
+
             // Quantity field
             TextFormField(
               controller: _quantityController,
@@ -197,15 +249,16 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Будь ласка, введіть кількість';
                 }
-                if (double.tryParse(value) == null || double.parse(value) <= 0) {
+                if (double.tryParse(value) == null ||
+                    double.parse(value) <= 0) {
                   return 'Введіть коректне число';
                 }
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Unit field
             TextFormField(
               controller: _unitController,
@@ -220,9 +273,9 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Stock amount field
             TextFormField(
               controller: _stockAmountController,
@@ -241,68 +294,51 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Frequency selection
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Частота прийому:',
-                  style: TextStyle(fontSize: 16),
-                ),
-                                RadioListTile<ReminderFrequency>(
-                  title: const Text('Щодня'),
-                  value: ReminderFrequency.daily,
-                  groupValue: _frequency,
-                  onChanged: _onFrequencyChanged,
-                ),
-                RadioListTile<ReminderFrequency>(
-                  title: const Text('Щотижня'),
-                  value: ReminderFrequency.weekly,
-                  groupValue: _frequency,
-                  onChanged: _onFrequencyChanged,
-                ),
-                RadioListTile<ReminderFrequency>(
-                  title: const Text('За потреби'),
-                  value: ReminderFrequency.asNeeded,
-                  groupValue: _frequency,
-                  onChanged: _onFrequencyChanged,
-                ),
-              ],
-            ),
-            
+
             const SizedBox(height: 16),
-            
-            // Time picker
+
+            // Time selection
             if (_showTimePicker)
-              GestureDetector(
-                onTap: _selectTime,
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Час прийому',
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(Icons.access_time),
-                    ),
-                    controller: TextEditingController(
-                      text: '${_timeToTake.hour.toString().padLeft(2, '0')}:${_timeToTake.minute.toString().padLeft(2, '0')}',
-                    ),
-                    validator: _showTimePicker
-                        ? (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Будь ласка, оберіть час прийому';
-                            }
-                            return null;
-                          }
-                        : null,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Час прийому:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: _selectTime,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${_timeToTake.hour.toString().padLeft(2, '0')}:${_timeToTake.minute.toString().padLeft(2, '0')}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const Icon(Icons.access_time),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            
-            const SizedBox(height: 24),
-            
+
+            const SizedBox(height: 32),
+
             // Save button
             ElevatedButton(
               onPressed: _saveReminder,
@@ -310,7 +346,7 @@ class _AddEditMedicationScreenState extends State<AddEditMedicationScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: Text(
-                isEditing ? 'Зберегти зміни' : 'Додати прийом',
+                isEditing ? 'Оновити прийом' : 'Додати прийом',
                 style: const TextStyle(fontSize: 16),
               ),
             ),

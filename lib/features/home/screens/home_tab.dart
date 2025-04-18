@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
-import 'package:vita_min_control_helper/data/repositories/mock_data.dart';
+import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
+import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
+import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  State<HomeTab> createState() => _HomeTabState();
+  ConsumerState<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
-  late List<Reminder> _reminders;
-  late List<Supplement> _supplements;
-  late List<Reminder> _todayReminders;
+class _HomeTabState extends ConsumerState<HomeTab> {
+  List<Reminder> _reminders = [];
+  List<Supplement> _supplements = [];
+  List<Reminder> _todayReminders = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -23,11 +28,64 @@ class _HomeTabState extends State<HomeTab> {
     _loadData();
   }
 
-  void _loadData() {
-    // In a real app, this would load from a repository
-    _reminders = MockData.getReminders(MockData.defaultUser.id);
-    _supplements = MockData.supplements;
-    _filterTodayReminders();
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      // Load supplements from the API
+      final supplementRepo = ref.read(supplementRepositoryProvider);
+      final supplements = await supplementRepo.getSupplements();
+
+      // Load reminders from local storage
+      await _loadLocalReminders();
+
+      setState(() {
+        _supplements = supplements;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Помилка завантаження даних: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadLocalReminders() async {
+    try {
+      // Get the current user ID
+      final authState = ref.read(authProvider);
+      final userId = authState.userId ?? 'guest-user';
+
+      // Load from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
+
+      // Parse reminders
+      final reminders =
+          remindersJson
+              .map((json) => Reminder.fromJson(jsonDecode(json)))
+              .toList();
+
+      // Update state
+      setState(() {
+        _reminders = reminders;
+        _filterTodayReminders();
+      });
+
+      // Also update the provider
+      ref.read(localRemindersProvider.notifier).state = reminders;
+    } catch (e) {
+      print('Error loading local reminders: $e');
+      // Return empty list in case of error
+      setState(() {
+        _reminders = [];
+        _todayReminders = [];
+      });
+    }
   }
 
   void _filterTodayReminders() {
@@ -64,23 +122,65 @@ class _HomeTabState extends State<HomeTab> {
     return supplement.name;
   }
 
-  void _markAsTaken(Reminder reminder) {
-    // In a real app, this would update the repository and create an intake log
-    setState(() {
-      final index = _todayReminders.indexOf(reminder);
-      if (index != -1) {
-        _todayReminders[index] = reminder.copyWith(isConfirmed: true);
-      }
-    });
+  Future<void> _markAsTaken(Reminder reminder) async {
+    try {
+      // Get the current user ID
+      final authState = ref.read(authProvider);
+      final userId = authState.userId ?? 'guest-user';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${_getSupplementName(reminder.supplementId)} відмічено як прийнятий',
+      // Load existing reminders
+      final prefs = await SharedPreferences.getInstance();
+      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
+
+      // Convert reminders to list of objects
+      final reminders =
+          remindersJson
+              .map((json) => Reminder.fromJson(jsonDecode(json)))
+              .toList();
+
+      // Find the reminder to mark as taken
+      final index = reminders.indexWhere((r) => r.id == reminder.id);
+
+      if (index >= 0) {
+        // Update the reminder
+        final updatedReminder = reminder.copyWith(isConfirmed: true);
+        reminders[index] = updatedReminder;
+
+        // Save back to SharedPreferences
+        final updatedJson =
+            reminders.map((r) => jsonEncode(r.toJson())).toList();
+
+        await prefs.setStringList('reminders_$userId', updatedJson);
+
+        // Update local state
+        setState(() {
+          _reminders = reminders;
+          final index = _todayReminders.indexOf(reminder);
+          if (index != -1) {
+            _todayReminders[index] = updatedReminder;
+          }
+        });
+
+        // Also update the provider
+        ref.read(localRemindersProvider.notifier).state = reminders;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${_getSupplementName(reminder.supplementId)} відмічено як прийнятий',
+          ),
+          duration: const Duration(seconds: 2),
         ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Помилка: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   /* void _showAddSingleIntakeDialog() {
@@ -140,90 +240,99 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadData,
+              child: const Text('Спробувати знову'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return _todayReminders.isEmpty
         ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: 
               Text(
                 'На сьогодні немає запланованих прийомів',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  print('Navigating to /course');
-                  context.go('/course');
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Додати в курс'),
-              ),
-            ],
-          ),
+      
         )
-        : ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: _todayReminders.length,
-          itemBuilder: (context, index) {
-            final reminder = _todayReminders[index];
-            final isCompleted = reminder.isConfirmed;
+        : RefreshIndicator(
+          onRefresh: _loadData,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _todayReminders.length,
+            itemBuilder: (context, index) {
+              final reminder = _todayReminders[index];
+              final isCompleted = reminder.isConfirmed;
 
-            return Card(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor:
-                          isCompleted
-                              ? Colors.green.shade100
-                              : Theme.of(context).colorScheme.primaryContainer,
-                      child: Icon(
-                        isCompleted ? Icons.check : Icons.access_time,
-                        color:
+              return Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor:
                             isCompleted
-                                ? Colors.green
+                                ? Colors.green.shade100
                                 : Theme.of(
                                   context,
-                                ).colorScheme.onPrimaryContainer,
+                                ).colorScheme.primaryContainer,
+                        child: Icon(
+                          isCompleted ? Icons.check : Icons.access_time,
+                          color:
+                              isCompleted
+                                  ? Colors.green
+                                  : Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                        ),
                       ),
-                    ),
-                    title: Text(
-                      _getSupplementName(reminder.supplementId),
-                      style: TextStyle(
-                        decoration:
-                            isCompleted ? TextDecoration.lineThrough : null,
+                      title: Text(
+                        _getSupplementName(reminder.supplementId),
+                        style: TextStyle(
+                          decoration:
+                              isCompleted ? TextDecoration.lineThrough : null,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      reminder.timeToTake != null
-                          ? '${reminder.quantity} ${reminder.unit}, ${DateFormat.Hm().format(DateTime(2023, 1, 1, reminder.timeToTake!.hour, reminder.timeToTake!.minute))}'
-                          : '${reminder.quantity} ${reminder.unit}, За потреби',
-                      style: TextStyle(
-                        decoration:
-                            isCompleted ? TextDecoration.lineThrough : null,
+                      subtitle: Text(
+                        reminder.timeToTake != null
+                            ? '${reminder.quantity} ${reminder.unit} о ${reminder.timeToTake!.hour.toString().padLeft(2, '0')}:${reminder.timeToTake!.minute.toString().padLeft(2, '0')}'
+                            : '${reminder.quantity} ${reminder.unit} (час не вказано)',
                       ),
+                      trailing:
+                          isCompleted
+                              ? const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              )
+                              : IconButton(
+                                icon: const Icon(Icons.check_circle_outline),
+                                onPressed: () => _markAsTaken(reminder),
+                              ),
                     ),
-                  ),
-                  if (!isCompleted)
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () => _markAsTaken(reminder),
-                            icon: const Icon(Icons.check),
-                            label: const Text('Прийнято'),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         );
   }
 }

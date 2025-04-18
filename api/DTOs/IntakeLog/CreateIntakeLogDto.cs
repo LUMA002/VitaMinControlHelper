@@ -6,7 +6,7 @@ namespace api.DTOs.IntakeLog
     {
         [Required(ErrorMessage = "ID добавки обов'язковий")]
         public Guid SupplementID { get; set; }
-        
+        // наразі трохи зайві поля, залишу із перспективою реалізації
         [Required(ErrorMessage = "Кількість обов'язкова")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Кількість має бути більше 0")]
         public double Quantity { get; set; }
