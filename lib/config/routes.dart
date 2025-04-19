@@ -36,13 +36,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       // Logged in or guest, prevent access to auth pages
-      if ((isLoggedIn || isGuest) && isGoingToAuth) {
+      /*       if ((isLoggedIn || isGuest) && isGoingToAuth) {
+        return '/home';
+      }
+ */
+
+      if (isLoggedIn && isGoingToAuth) {
         return '/home';
       }
 
-      // Guest users can only access knowledge section
+      // Guest users can only access knowledge and login section
+      //redirection bug fixed
       if (isGuest &&
           state.matchedLocation != '/knowledge' &&
+          state.matchedLocation != '/login' &&
+          state.matchedLocation != '/register' &&
           !state.matchedLocation.startsWith('/knowledge/')) {
         return '/knowledge';
       }
@@ -76,10 +84,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           // Home tab
-          GoRoute(
-            path: '/home',
-            builder: (context, state) => const HomeTab(),
-          ),
+          GoRoute(path: '/home', builder: (context, state) => const HomeTab()),
           // Course tab
           GoRoute(
             path: '/course',

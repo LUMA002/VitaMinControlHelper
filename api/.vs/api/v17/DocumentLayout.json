@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\dtos\\supplement\\updatesupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:dtos\\supplement\\updatesupplementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -11,20 +23,12 @@
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:models\\supplement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\usersupplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\mappers\\usersupplementmappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:mappers\\usersupplementmappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|solutionrelative:controllers\\supplementscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ED562DFE-B9EF-5F88-771F-EBF333E4D08F}|api.csproj|d:\\hot_access\\study\\projects\\flutter\\courseprojectapp\\vita_min_control_helper\\api\\controllers\\supplementtypescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -106,11 +110,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
+              "Title": "UpdateSupplementDto.cs",
+              "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Supplement\\UpdateSupplementDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\Supplement\\UpdateSupplementDto.cs",
+              "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Supplement\\UpdateSupplementDto.cs",
+              "RelativeToolTip": "DTOs\\Supplement\\UpdateSupplementDto.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-19T07:45:21.952Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "UserSupplementMappers.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Mappers\\UserSupplementMappers.cs",
               "RelativeDocumentMoniker": "Mappers\\UserSupplementMappers.cs",
@@ -131,20 +148,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "UserSupplementsController.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\UserSupplementsController.cs",
               "RelativeDocumentMoniker": "Controllers\\UserSupplementsController.cs",
               "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\UserSupplementsController.cs",
               "RelativeToolTip": "Controllers\\UserSupplementsController.cs",
-              "ViewState": "AgIAAIoAAAAAAAAAAAAAAJ0AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJ0AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T20:12:32.201Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "SupplementTypesController.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementTypesController.cs",
               "RelativeDocumentMoniker": "Controllers\\SupplementTypesController.cs",
@@ -157,20 +174,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "SupplementsController.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementsController.cs",
               "RelativeDocumentMoniker": "Controllers\\SupplementsController.cs",
               "ToolTip": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\SupplementsController.cs",
               "RelativeToolTip": "Controllers\\SupplementsController.cs",
-              "ViewState": "AgIAALQAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGoAAAAAAAAAAAAkwIEAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T20:12:11.891Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -183,7 +200,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Supplement.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\Supplement.cs",
               "RelativeDocumentMoniker": "Models\\Supplement.cs",
@@ -196,7 +213,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "ApplicationDBContext.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Data\\ApplicationDBContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDBContext.cs",
@@ -209,7 +226,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "IntakeLogsController.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\IntakeLogsController.cs",
               "RelativeDocumentMoniker": "Controllers\\IntakeLogsController.cs",
@@ -222,7 +239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -235,7 +252,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "UserSupplementDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\UserSupplementDto.cs",
               "RelativeDocumentMoniker": "DTOs\\UserSupplement\\UserSupplementDto.cs",
@@ -248,7 +265,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "AddUserSupplementDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\UserSupplement\\AddUserSupplementDto.cs",
               "RelativeDocumentMoniker": "DTOs\\UserSupplement\\AddUserSupplementDto.cs",
@@ -261,7 +278,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\User.cs",
               "RelativeDocumentMoniker": "Models\\User.cs",
@@ -274,7 +291,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "UserSupplement.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\UserSupplement.cs",
               "RelativeDocumentMoniker": "Models\\UserSupplement.cs",
@@ -287,7 +304,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "SupplementTypeRelation.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementTypeRelation.cs",
               "RelativeDocumentMoniker": "Models\\SupplementTypeRelation.cs",
@@ -300,7 +317,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "SupplementType.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\SupplementType.cs",
               "RelativeDocumentMoniker": "Models\\SupplementType.cs",
@@ -313,7 +330,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "IntakeLog.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\Models\\IntakeLog.cs",
               "RelativeDocumentMoniker": "Models\\IntakeLog.cs",
@@ -326,7 +343,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "AuthResponseDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\AuthResponseDto.cs",
               "RelativeDocumentMoniker": "DTOs\\Auth\\AuthResponseDto.cs",
@@ -338,7 +355,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\LoginDto.cs",
               "RelativeDocumentMoniker": "DTOs\\Auth\\LoginDto.cs",
@@ -350,7 +367,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "RegisterDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\RegisterDto.cs",
               "RelativeDocumentMoniker": "DTOs\\Auth\\RegisterDto.cs",
@@ -362,7 +379,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "UserDto.cs",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\DTOs\\Auth\\UserDto.cs",
               "RelativeDocumentMoniker": "DTOs\\Auth\\UserDto.cs",
@@ -374,7 +391,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "api.csproj",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
               "RelativeDocumentMoniker": "api.csproj",
@@ -386,7 +403,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -398,7 +415,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "api",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.csproj",
               "RelativeDocumentMoniker": "api.csproj",
@@ -409,7 +426,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "api.http",
               "DocumentMoniker": "D:\\Hot_ACCESS\\Study\\Projects\\Flutter\\CourseProjectApp\\vita_min_control_helper\\api\\api.http",
               "RelativeDocumentMoniker": "api.http",

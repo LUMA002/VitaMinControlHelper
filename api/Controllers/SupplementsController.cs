@@ -128,6 +128,7 @@ namespace api.Controllers
         }
 
         // PUT: api/Supplements/5
+        // !here is smth wrong with update multiple types of supplement, check and fix it later!
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> UpdateSupplement(Guid id, CreateSupplementDto updateDto)

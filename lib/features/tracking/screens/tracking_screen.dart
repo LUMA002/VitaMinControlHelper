@@ -50,7 +50,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
       final supplements = await supplementRepo.getSupplements();
 
-     // final intakeLogs = await intakeRepo.getIntakeLogs();
+      // final intakeLogs = await intakeRepo.getIntakeLogs();
 
       // Load reminders from local storage
       await _loadLocalReminders();
@@ -58,7 +58,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
       setState(() {
         _supplements = supplements;
 
-      //  _intakeLogs = intakeLogs;
+        //  _intakeLogs = intakeLogs;
 
         _isLoading = false;
       });
@@ -251,12 +251,11 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
     return _reminders.isEmpty
         ? Center(
-          child: 
-              Text(
-                'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge,
-              ),
+          child: Text(
+            'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge,
+          ),
         )
         : Column(
           children: [

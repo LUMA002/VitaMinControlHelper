@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 class GuestModeDialog {
   static void show(BuildContext context) {
+    final parentContext = context; // зберігаємо батьківський контекст
     showDialog(
       context: context,
       builder:
@@ -20,7 +21,7 @@ class GuestModeDialog {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  context.go('/login');
+                  parentContext.go('/login');
                 },
                 child: const Text('Увійти'),
               ),

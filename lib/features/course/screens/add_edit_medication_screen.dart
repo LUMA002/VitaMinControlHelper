@@ -329,7 +329,7 @@ class _AddEditMedicationScreenState
               },
             ),
 
-          /*   const SizedBox(height: 16),
+            /*   const SizedBox(height: 16),
 
             // Unit field
             TextFormField(
@@ -369,7 +369,7 @@ class _AddEditMedicationScreenState
                   }
                 }
                 return null;
-              },  
+              },
             ),
 
             const SizedBox(height: 16),
