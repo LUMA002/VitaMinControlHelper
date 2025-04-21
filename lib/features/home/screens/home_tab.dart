@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
+import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
+import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
+import 'package:vita_min_control_helper/data/repositories/local/local_reminder_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
@@ -56,21 +62,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Future<void> _loadLocalReminders() async {
     try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+      final localReminderRepo = ref.read(localReminderRepositoryProvider);
+      final reminders = localReminderRepo.getReminders();
 
-      // Load from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
-
-      // Parse reminders
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
-
-      // Update state
       setState(() {
         _reminders = reminders;
         _filterTodayReminders();
@@ -80,7 +74,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       ref.read(localRemindersProvider.notifier).state = reminders;
     } catch (e) {
       print('Error loading local reminders: $e');
-      // Return empty list in case of error
       setState(() {
         _reminders = [];
         _todayReminders = [];
@@ -124,62 +117,75 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Future<void> _markAsTaken(Reminder reminder) async {
     try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+      final localReminderRepo = ref.read(localReminderRepositoryProvider);
+      final intakeRepo = ref.read(intakeRepositoryProvider);
+      final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
 
-      // Load existing reminders
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
+      // Mark reminder as taken locally
+      await localReminderRepo.markReminderAsTaken(reminder.id);
 
-      // Convert reminders to list of objects
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
+      // Переконуємося, що unit не буде null
+      final safeUnit = reminder.unit ?? 'шт';
 
-      // Find the reminder to mark as taken
-      final index = reminders.indexWhere((r) => r.id == reminder.id);
+      // Create an intake log
+      final now = DateTime.now();
+      final intakeLog = IntakeLog(
+        userSupplementId: reminder.supplementId,
+        intakeTime: now,
+        dosage: reminder.quantity,
+        unit: safeUnit,
+      );
 
-      if (index >= 0) {
-        // Update the reminder
-        final updatedReminder = reminder.copyWith(isConfirmed: true);
-        reminders[index] = updatedReminder;
+      // Save the intake log locally
+      await localIntakeRepo.saveIntakeLog(intakeLog);
 
-        // Save back to SharedPreferences
-        final updatedJson =
-            reminders.map((r) => jsonEncode(r.toJson())).toList();
-
-        await prefs.setStringList('reminders_$userId', updatedJson);
-
-        // Update local state
-        setState(() {
-          _reminders = reminders;
-          final index = _todayReminders.indexOf(reminder);
-          if (index != -1) {
-            _todayReminders[index] = updatedReminder;
-          }
-        });
-
-        // Also update the provider
-        ref.read(localRemindersProvider.notifier).state = reminders;
+      // Виклик API в окремому блоку try-catch для ізоляції помилок
+      try {
+        await intakeRepo.addIntakeLog(
+          reminder.supplementId,
+          now,
+          dosage: reminder.quantity,
+          unit: safeUnit,
+        );
+        log('Запис успішно додано в API');
+      } catch (e) {
+        // Логуємо помилку, але не перериваємо виконання
+        print(
+          'Помилка при збереженні в API: $e (НАСПАВДІ ЦЕ ЯКИЙСЬ ФЕЙК, дані на бек прийшли)',
+        );
+        // Не кидаємо виняток далі, бо дані вже збережені локально
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${_getSupplementName(reminder.supplementId)} відмічено як прийнятий',
+      // Update the UI
+      setState(() {
+        _reminders = localReminderRepo.getReminders();
+        _filterTodayReminders();
+      });
+
+      // Also update the provider
+      ref.read(localRemindersProvider.notifier).state = _reminders;
+
+      // After all the async operations
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${_getSupplementName(reminder.supplementId)} відмічено як прийнятий',
+            ),
+            duration: const Duration(seconds: 2),
           ),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Помилка: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      // Тут обробляємо тільки критичні помилки, які перешкоджають роботі
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Помилка: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -266,13 +272,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
     return _todayReminders.isEmpty
         ? Center(
-          child: 
-              Text(
-                'На сьогодні немає запланованих прийомів',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-      
+          child: Text(
+            'На сьогодні немає запланованих прийомів',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         )
         : RefreshIndicator(
           onRefresh: _loadData,

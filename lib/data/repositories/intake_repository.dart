@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/services/api_service.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
-
+// додати quantity, dosage + додати поле дозування в бекенд та
+// змінити відповідно збереження і т.п локлаьно із цим полем
 class IntakeRepository {
   final Ref _ref;
 

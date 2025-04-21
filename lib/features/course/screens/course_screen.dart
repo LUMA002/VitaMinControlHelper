@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
+import 'package:vita_min_control_helper/data/repositories/local/local_reminder_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
-import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
 import 'package:vita_min_control_helper/features/course/screens/add_edit_medication_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 
 // Local storage provider for reminders
 final localRemindersProvider = StateProvider<List<Reminder>>((ref) => []);
@@ -58,21 +57,9 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
 
   Future<void> _loadLocalReminders() async {
     try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+      final localReminderRepo = ref.read(localReminderRepositoryProvider);
+      final reminders = localReminderRepo.getReminders();
 
-      // Load from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
-
-      // Parse reminders
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
-
-      // Update state
       setState(() {
         _reminders = reminders;
       });
@@ -81,7 +68,6 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
       ref.read(localRemindersProvider.notifier).state = reminders;
     } catch (e) {
       print('Error loading local reminders: $e');
-      // Return empty list in case of error
       setState(() {
         _reminders = [];
       });
@@ -90,43 +76,11 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
 
   Future<void> _saveLocalReminder(Reminder reminder) async {
     try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+      final localReminderRepo = ref.read(localReminderRepositoryProvider);
+      await localReminderRepo.saveReminder(reminder);
 
-      // Load existing reminders
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
-
-      // Convert reminders to list of objects
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
-
-      // Find if the reminder already exists
-      final existingIndex = reminders.indexWhere((r) => r.id == reminder.id);
-
-      if (existingIndex >= 0) {
-        // Update existing reminder
-        reminders[existingIndex] = reminder;
-      } else {
-        // Add new reminder
-        reminders.add(reminder);
-      }
-
-      // Save back to SharedPreferences
-      final updatedJson = reminders.map((r) => jsonEncode(r.toJson())).toList();
-
-      await prefs.setStringList('reminders_$userId', updatedJson);
-
-      // Update the state
-      setState(() {
-        _reminders = reminders;
-      });
-
-      // Also update the provider
-      ref.read(localRemindersProvider.notifier).state = reminders;
+      // Reload reminders to update the UI
+      await _loadLocalReminders();
     } catch (e) {
       print('Error saving local reminder: $e');
       throw Exception('Failed to save reminder: $e');
@@ -135,35 +89,11 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
 
   Future<void> _deleteReminder(String id) async {
     try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+      final localReminderRepo = ref.read(localReminderRepositoryProvider);
+      await localReminderRepo.deleteReminder(id);
 
-      // Load existing reminders
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
-
-      // Convert reminders to list of objects
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
-
-      // Remove the reminder
-      reminders.removeWhere((r) => r.id == id);
-
-      // Save back to SharedPreferences
-      final updatedJson = reminders.map((r) => jsonEncode(r.toJson())).toList();
-
-      await prefs.setStringList('reminders_$userId', updatedJson);
-
-      // Update the state
-      setState(() {
-        _reminders = reminders;
-      });
-
-      // Also update the provider
-      ref.read(localRemindersProvider.notifier).state = reminders;
+      // Reload reminders to update the UI
+      await _loadLocalReminders();
     } catch (e) {
       print('Error deleting local reminder: $e');
       throw Exception('Failed to delete reminder: $e');

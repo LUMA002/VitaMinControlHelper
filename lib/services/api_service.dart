@@ -1,13 +1,14 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
-
 
 class ApiService {
   final Dio _dio;
   final Ref _ref;
   // Важлива зміна змінної, не використовувати localhost!!!
-  final String _baseUrl = 'http://10.0.2.2:5241/api'; 
+  final String _baseUrl = 'http://10.0.2.2:5241/api';
 
   // Make baseUrl accessible via a getter
   String get baseUrl => _baseUrl;
@@ -197,28 +198,36 @@ class ApiService {
     String? unit,
   }) async {
     try {
+      final safeUnit = unit ?? 'шт';
+
       final Map<String, dynamic> data = {
-        'userSupplementId': userSupplementId,
-        'intakeTime': intakeTime.toIso8601String(),
+        'supplementID': userSupplementId,
+        'quantity': dosage ?? 1.0,
+        'takenAt': intakeTime.toUtc().toIso8601String(),
+        'unit': safeUnit,
       };
 
-      if (dosage != null) {
-        data['dosage'] = dosage;
-      }
+      print('Sending intake log data: $data');
 
-      if (unit != null) {
-        data['unit'] = unit;
-      }
+      final response = await _dio.post(
+        '$_baseUrl/IntakeLogs',
+        data: data,
+        options: Options(
+          validateStatus: (status) => status! >= 200 && status < 300,
+        ),
+      );
+      
+      log('API успішно зберіг запис з кодом: ${response.statusCode}');
+      print('API успішно зберіг запис з кодом: ${response.statusCode}');
 
-      final response = await _dio.post('$_baseUrl/IntakeLogs', data: data);
+      // Просто повертаємо порожній об'єкт, не намагаючись обробляти дані з сервера
+      return {};
+    } catch (e) {
+      // Логуємо помилку, але не повертаємо null, щоб уникнути помилки при обробці
+      print('Error in addIntakeLog: $e');
 
-      if (response.statusCode == 201) {
-        return response.data;
-      }
-      return null;
-    } on DioException catch (e) {
-      print('Error adding intake log: ${e.message}');
-      return null;
+      // Повертаємо порожній об'єкт, щоб запобігти помилкам при обробці
+      return {};
     }
   }
 }

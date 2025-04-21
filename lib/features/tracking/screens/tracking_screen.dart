@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vita_min_control_helper/data/models/intake_log.dart';
+import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
-import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
-import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
-import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
-import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
+
 
 class TrackingScreen extends ConsumerStatefulWidget {
-  const TrackingScreen({super.key});
+  const TrackingScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<TrackingScreen> createState() => _TrackingScreenState();
 }
 
 class _TrackingScreenState extends ConsumerState<TrackingScreen> {
-  List<Reminder> _reminders = [];
   List<Supplement> _supplements = [];
-  final List<IntakeLog> _intakeLogs = [];
-  DateTime _selectedWeek = DateTime.now();
-  final String _selectedPeriod = 'Тиждень';
+  DateTime _selectedDate = DateTime.now();
+  String _selectedPeriod = 'Тиждень';
   String? _selectedSupplementId;
   bool _isLoading = true;
   String? _error;
@@ -46,20 +39,10 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     try {
       // Load supplements from the API
       final supplementRepo = ref.read(supplementRepositoryProvider);
-      final intakeRepo = ref.read(intakeRepositoryProvider);
-
       final supplements = await supplementRepo.getSupplements();
-
-      // final intakeLogs = await intakeRepo.getIntakeLogs();
-
-      // Load reminders from local storage
-      await _loadLocalReminders();
 
       setState(() {
         _supplements = supplements;
-
-        //  _intakeLogs = intakeLogs;
-
         _isLoading = false;
       });
     } catch (e) {
@@ -70,43 +53,58 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     }
   }
 
-  Future<void> _loadLocalReminders() async {
-    try {
-      // Get the current user ID
-      final authState = ref.read(authProvider);
-      final userId = authState.userId ?? 'guest-user';
+  DateTime _getStartDate() {
+    final now = DateTime.now();
 
-      // Load from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final remindersJson = prefs.getStringList('reminders_$userId') ?? [];
-
-      // Parse reminders
-      final reminders =
-          remindersJson
-              .map((json) => Reminder.fromJson(jsonDecode(json)))
-              .toList();
-
-      // Update state
-      setState(() {
-        _reminders = reminders;
-      });
-
-      // Also update the provider
-      ref.read(localRemindersProvider.notifier).state = reminders;
-    } catch (e) {
-      print('Error loading local reminders: $e');
-      // Return empty list in case of error
-      setState(() {
-        _reminders = [];
-      });
+    switch (_selectedPeriod) {
+      case 'Тиждень':
+        // Start from Monday of the current week
+        return DateTime(
+          now.year,
+          now.month,
+          now.day,
+        ).subtract(Duration(days: now.weekday - 1));
+      case 'Місяць':
+        // Start from the first day of the month
+        return DateTime(now.year, now.month, 1);
+      case 'Рік':
+        // Start from the first day of the year
+        return DateTime(now.year, 1, 1);
+      default:
+        return DateTime(
+          now.year,
+          now.month,
+          now.day,
+        ).subtract(Duration(days: now.weekday - 1));
     }
   }
 
-  List<DateTime> _getWeekDays() {
-    final monday = _selectedWeek.subtract(
-      Duration(days: _selectedWeek.weekday - 1),
+  DateTime _getEndDate() {
+    final startDate = _getStartDate();
+
+    switch (_selectedPeriod) {
+      case 'Тиждень':
+        return startDate.add(const Duration(days: 6));
+      case 'Місяць':
+        // Last day of the current month
+        return DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
+      case 'Рік':
+        // Last day of the current year
+        return DateTime(_selectedDate.year, 12, 31);
+      default:
+        return startDate.add(const Duration(days: 6));
+    }
+  }
+
+  List<DateTime> _getDatesInRange() {
+    final startDate = _getStartDate();
+    final endDate = _getEndDate();
+
+    final dayCount = endDate.difference(startDate).inDays + 1;
+    return List.generate(
+      dayCount,
+      (index) => startDate.add(Duration(days: index)),
     );
-    return List.generate(7, (index) => monday.add(Duration(days: index)));
   }
 
   String _getSupplementName(String supplementId) {
@@ -117,97 +115,48 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     return supplement.name;
   }
 
-  bool _wasIntakeTaken(Reminder reminder, DateTime date) {
-    // Check if there's an intake log for this reminder on this date
-    return _intakeLogs.any(
-      (log) =>
-          log.userSupplementId == reminder.supplementId &&
-          log.createdAt.year == date.year &&
-          log.createdAt.month == date.month &&
-          log.createdAt.day == date.day,
-    );
-  }
+  Map<DateTime, int> _getDailyIntakeCount() {
+    final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
+    final startDate = _getStartDate();
+    final endDate = _getEndDate();
 
-  List<IntakeLog> _getFilteredLogs() {
-    final now = DateTime.now();
-    final filtered =
-        _intakeLogs.where((log) {
-          // Filter by supplement if one is selected
-          if (_selectedSupplementId != null &&
-              log.userSupplementId != _selectedSupplementId) {
-            return false;
-          }
+    // Filter by selected supplement if one is selected
+    final dailyCounts = localIntakeRepo.getDailyIntakeCount(startDate, endDate);
 
-          // Filter by period
-          switch (_selectedPeriod) {
-            case 'Тиждень':
-              return log.createdAt.isAfter(
-                now.subtract(const Duration(days: 7)),
-              );
-            case 'Місяць':
-              return log.createdAt.isAfter(
-                now.subtract(const Duration(days: 30)),
-              );
-            case 'Рік':
-              return log.createdAt.isAfter(
-                now.subtract(const Duration(days: 365)),
-              );
-            default:
-              return true;
-          }
-        }).toList();
-
-    // Sort by date
-    filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    return filtered;
-  }
-
-  // Calculate statistics for the filtered logs
-  Map<String, int> _getDailyIntakeCount() {
-    final filteredLogs = _getFilteredLogs();
-    final Map<String, int> dailyCounts = {};
-
-    for (var log in filteredLogs) {
-      final dateKey = DateFormat('MM-dd').format(log.createdAt);
-      dailyCounts[dateKey] = (dailyCounts[dateKey] ?? 0) + 1;
+    // If no supplement is selected, return all counts
+    if (_selectedSupplementId == null) {
+      return dailyCounts;
     }
 
-    return dailyCounts;
-  }
+    // Filter log entries by the selected supplement
+    final logs =
+        localIntakeRepo
+            .getIntakeLogsForDateRange(startDate, endDate)
+            .where((log) => log.userSupplementId == _selectedSupplementId)
+            .toList();
 
-  List<BarChartGroupData> _getBarGroups() {
-    final dailyCounts = _getDailyIntakeCount();
-    final groups = <BarChartGroupData>[];
-
-    int index = 0;
-    dailyCounts.forEach((date, count) {
-      groups.add(
-        BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(
-              toY: count.toDouble(),
-              color: Theme.of(context).colorScheme.primary,
-              width: 20,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(6),
-                topRight: Radius.circular(6),
-              ),
-            ),
-          ],
-        ),
+    final Map<DateTime, int> filteredCounts = {};
+    for (var log in logs) {
+      final day = DateTime(
+        log.intakeTime.year,
+        log.intakeTime.month,
+        log.intakeTime.day,
       );
-      index++;
-    });
+      filteredCounts[day] = (filteredCounts[day] ?? 0) + 1;
+    }
 
-    return groups;
+    return filteredCounts;
   }
 
   Map<String, int> _getSupplementIntakeCount() {
-    final filteredLogs = _getFilteredLogs();
+    final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
+    final startDate = _getStartDate();
+    final endDate = _getEndDate();
+
+    final logs = localIntakeRepo.getIntakeLogsForDateRange(startDate, endDate);
     final Map<String, int> supplementCounts = {};
 
-    for (var log in filteredLogs) {
+    for (var log in logs) {
       final supplementName = _getSupplementName(log.userSupplementId);
       supplementCounts[supplementName] =
           (supplementCounts[supplementName] ?? 0) + 1;
@@ -216,202 +165,313 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     return supplementCounts;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+  List<BarChartGroupData> _getBarGroups(BuildContext context) {
+    final theme = Theme.of(context);
+    final dailyCounts = _getDailyIntakeCount();
+    final dates = _getDatesInRange();
+    final List<BarChartGroupData> groups = [];
 
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _error!,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadData,
-              child: const Text('Спробувати знову'),
+    for (int i = 0; i < dates.length; i++) {
+      final date = dates[i];
+      final count = dailyCounts[date] ?? 0;
+
+      groups.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: count.toDouble(),
+              color: theme.colorScheme.primary,
+              width: _selectedPeriod == 'Рік' ? 8 : 16,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(6),
+                topRight: Radius.circular(6),
+              ),
             ),
           ],
         ),
       );
     }
 
-    final weekDays = _getWeekDays();
-    final theme = Theme.of(context);
-    final filteredLogs = _getFilteredLogs();
-    final supplementCounts = _getSupplementIntakeCount();
-    final barGroups = _getBarGroups();
-    final dailyCounts = _getDailyIntakeCount();
+    return groups;
+  }
 
-    return _reminders.isEmpty
-        ? Center(
-          child: Text(
-            'Додайте препарати в розділі "Курс"\nдля відстеження їх прийому',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge,
-          ),
-        )
-        : Column(
+  String _getDateLabel(int index) {
+    final dates = _getDatesInRange();
+    if (index >= 0 && index < dates.length) {
+      final date = dates[index];
+
+      switch (_selectedPeriod) {
+        case 'Тиждень':
+          return DateFormat('EE').format(date); // Mon, Tue, etc.
+        case 'Місяць':
+          return date.day.toString();
+        case 'Рік':
+          return DateFormat('MMM').format(date); // Jan, Feb, etc.
+        default:
+          return DateFormat('d').format(date);
+      }
+    }
+    return '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(child: Text(_error!));
+    }
+
+    final supplementCounts = _getSupplementIntakeCount();
+    final barGroups = _getBarGroups(context);
+
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Навігація по тижнях
-            Padding(
+            // Period selection
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Період:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                DropdownButton<String>(
+                  value: _selectedPeriod,
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedPeriod = newValue;
+                      });
+                    }
+                  },
+                  items:
+                      _periods.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            // Supplement filter
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Добавка:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                DropdownButton<String?>(
+                  value: _selectedSupplementId,
+                  hint: const Text('Всі добавки'),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedSupplementId = newValue;
+                    });
+                  },
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('Всі добавки'),
+                    ),
+                    ..._supplements.map<DropdownMenuItem<String>>((supplement) {
+                      return DropdownMenuItem<String>(
+                        value: supplement.id,
+                        child: Text(supplement.name),
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Bar chart
+            Text(
+              'Прийоми добавок за період',
+              style: theme.textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 300,
               padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: () {
-                      setState(() {
-                        _selectedWeek = _selectedWeek.subtract(
-                          const Duration(days: 7),
-                        );
-                      });
-                    },
-                  ),
-                  Text(
-                    '${DateFormat('d MMM', 'uk').format(weekDays.first)} - '
-                    '${DateFormat('d MMM', 'uk').format(weekDays.last)}',
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: () {
-                      setState(() {
-                        _selectedWeek = _selectedWeek.add(
-                          const Duration(days: 7),
-                        );
-                      });
-                    },
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    spreadRadius: 1,
+                    blurRadius: 10,
                   ),
                 ],
               ),
-            ),
-
-            // Дні тижня
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children:
-                    weekDays.map((day) {
-                      final isToday =
-                          day.day == DateTime.now().day &&
-                          day.month == DateTime.now().month &&
-                          day.year == DateTime.now().year;
-                      return Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration:
-                              isToday
-                                  ? BoxDecoration(
-                                    color: theme.colorScheme.primaryContainer,
-                                    borderRadius: BorderRadius.circular(8),
-                                  )
-                                  : null,
-                          child: Column(
-                            children: [
-                              Text(
-                                DateFormat.E('uk').format(day)[0],
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                              Text(
-                                day.day.toString(),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color:
-                                      isToday
-                                          ? theme.colorScheme.onPrimaryContainer
-                                          : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ),
-
-            const Divider(height: 32),
-
-            // Список препаратів
-            Expanded(
-              child: ListView.builder(
-                itemCount: _reminders.length,
-                itemBuilder: (context, index) {
-                  final reminder = _reminders[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _getSupplementName(reminder.supplementId),
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children:
-                              weekDays.map((day) {
-                                final taken = _wasIntakeTaken(reminder, day);
-                                return Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      // Тут буде логіка зміни стану прийому
-                                      setState(() {
-                                        // Оновлення стану
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Container(
-                                        width: 24,
-                                        height: 24,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: theme.colorScheme.primary,
-                                            width: 2,
-                                          ),
-                                          color:
-                                              taken
-                                                  ? theme.colorScheme.primary
-                                                  : null,
-                                        ),
-                                        child:
-                                            taken
-                                                ? Icon(
-                                                  Icons.check,
-                                                  size: 16,
-                                                  color:
-                                                      theme
-                                                          .colorScheme
-                                                          .onPrimary,
-                                                )
-                                                : null,
-                                      ),
-                                    ),
+              child:
+                  barGroups.isEmpty
+                      ? const Center(
+                        child: Text('Немає даних для відображення'),
+                      )
+                      : BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          maxY:
+                              barGroups.fold(0.0, (max, group) {
+                                final rodMax = group.barRods.fold(
+                                  0.0,
+                                  (m, rod) => rod.toY > m ? rod.toY : m,
+                                );
+                                return rodMax > max ? rodMax : max;
+                              }) +
+                              1, // Add some padding at the top
+                          barTouchData: BarTouchData(
+                            enabled: true,
+                            touchTooltipData: BarTouchTooltipData(
+                             // getTooltipColor: theme.colorScheme.surface,
+                              tooltipPadding: const EdgeInsets.all(8),
+                              tooltipMargin: 8,
+                              getTooltipItem: (
+                                group,
+                                groupIndex,
+                                rod,
+                                rodIndex,
+                              ) {
+                                final count = rod.toY.toInt();
+                                final date = _getDatesInRange()[groupIndex];
+                                return BarTooltipItem(
+                                  '${DateFormat('d MMM').format(date)}\n$count прийомів',
+                                  TextStyle(
+                                    color: theme.colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 );
-                              }).toList(),
+                              },
+                            ),
+                          ),
+                          titlesData: FlTitlesData(
+                            show: true,
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  return SideTitleWidget(
+                                    meta: meta,
+                                    child: Text(
+                                      _getDateLabel(value.toInt()),
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                reservedSize: 30,
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  if (value == 0)
+                                    return const SizedBox.shrink();
+                                  return SideTitleWidget(
+                                    meta: meta,
+                                    child: Text(
+                                      value.toInt().toString(),
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                reservedSize: 30,
+                              ),
+                            ),
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                          ),
+                          borderData: FlBorderData(show: false),
+                          gridData: const FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: false,
+                          ),
+                          barGroups: barGroups,
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Supplement statistics
+            Text('Статистика по добавках', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Expanded(
+              child:
+                  supplementCounts.isEmpty
+                      ? const Center(
+                        child: Text('Немає даних для відображення'),
+                      )
+                      : ListView(
+                        children: () {
+                          final entries = supplementCounts.entries.toList();
+                          entries.sort((a, b) => b.value.compareTo(a.value));
+                          return entries.map((entry) {
+                            final percentage =
+                                supplementCounts.values.sum == 0
+                                    ? 0.0
+                                    : entry.value /
+                                        supplementCounts.values.sum *
+                                        100;
+
+                            return ListTile(
+                              title: Text(entry.key),
+                              subtitle: LinearProgressIndicator(
+                                value: percentage / 100,
+                                backgroundColor: theme.colorScheme.primary
+                                    .withValues(alpha: 0.2),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  theme.colorScheme.primary,
+                                ),
+                              ),
+                              trailing: Text(
+                                '${entry.value} (${percentage.toStringAsFixed(1)}%)',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          }).toList();
+                        }(),
+                      ),
             ),
           ],
-        );
+        ),
+      ),
+    );
   }
+}
+
+extension IterableSum on Iterable<int> {
+  int get sum => fold(0, (a, b) => a + b);
 }

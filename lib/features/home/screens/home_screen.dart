@@ -74,20 +74,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final isGuest = authState.isGuest;
-    final isKnowledgeScreen = _currentIndex == 3;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
-        leading:
-            isKnowledgeScreen && !isGuest
-                ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    context.go('/home');
-                  },
-                )
-                : null,
+
         actions: [
           // Show login button for guests
           if (isGuest)

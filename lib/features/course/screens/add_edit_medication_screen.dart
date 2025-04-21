@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
+import 'package:vita_min_control_helper/data/repositories/local/local_reminder_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
@@ -145,8 +146,8 @@ class _AddEditMedicationScreenState
 
         // Для реального додатку, тут має бути збереження у репозиторій
         // Наприклад:
-        // final reminderRepo = ref.read(reminderRepositoryProvider);
-        // await reminderRepo.saveReminder(newReminder);
+          final reminderRepo = ref.read(localReminderRepositoryProvider);
+          await reminderRepo.saveReminder(newReminder);
 
         // Для цілей відладки виведемо інформацію
         print('Зберігаємо нагадування: ${newReminder.toJson()}');
