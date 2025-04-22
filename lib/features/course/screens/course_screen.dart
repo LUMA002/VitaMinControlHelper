@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
@@ -67,7 +68,7 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
       // Also update the provider
       ref.read(localRemindersProvider.notifier).state = reminders;
     } catch (e) {
-      print('Error loading local reminders: $e');
+      log('Error loading local reminders: $e');
       setState(() {
         _reminders = [];
       });
@@ -82,7 +83,7 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
       // Reload reminders to update the UI
       await _loadLocalReminders();
     } catch (e) {
-      print('Error saving local reminder: $e');
+      log('Error saving local reminder: $e');
       throw Exception('Failed to save reminder: $e');
     }
   }
@@ -95,7 +96,7 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
       // Reload reminders to update the UI
       await _loadLocalReminders();
     } catch (e) {
-      print('Error deleting local reminder: $e');
+      log('Error deleting local reminder: $e');
       throw Exception('Failed to delete reminder: $e');
     }
   }

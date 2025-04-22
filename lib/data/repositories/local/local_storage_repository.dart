@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,7 +43,7 @@ class LocalStorageRepository {
         final jsonString = jsonEncode(object);
         return await saveString(key, jsonString);
       } catch (e) {
-        print('Error saving object to local storage: $e');
+        log('Error saving object to local storage: $e');
         return false;
       }
     }
@@ -59,7 +60,7 @@ class LocalStorageRepository {
       final map = jsonDecode(jsonString) as Map<String, dynamic>;
       return fromJson(map);
     } catch (e) {
-      print('Error retrieving object from local storage: $e');
+      log('Error retrieving object from local storage: $e');
       return null;
     }
   }
@@ -70,7 +71,7 @@ class LocalStorageRepository {
       final jsonStringList = objects.map((obj) => jsonEncode(obj)).toList();
       return await saveStringList(key, jsonStringList);
     } catch (e) {
-      print('Error saving object list to local storage: $e');
+      log('Error saving object list to local storage: $e');
       return false;
     }
   }
@@ -87,7 +88,7 @@ class LocalStorageRepository {
           .map((jsonString) => fromJson(jsonDecode(jsonString)))
           .toList();
     } catch (e) {
-      print('Error retrieving object list from local storage: $e');
+      log('Error retrieving object list from local storage: $e');
       return [];
     }
   }

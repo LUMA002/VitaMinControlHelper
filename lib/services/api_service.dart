@@ -50,7 +50,7 @@ class ApiService {
       }
       return null;
     } on DioException catch (e) {
-      print('Login error: ${e.message}');
+      log('Login error: ${e.message}');
       return null;
     }
   }
@@ -96,7 +96,7 @@ class ApiService {
       }
       return null;
     } on DioException catch (e) {
-      print('Register error: ${e.message}');
+      log('Register error: ${e.message}');
       return null;
     }
   }
@@ -111,7 +111,7 @@ class ApiService {
       }
       return [];
     } on DioException catch (e) {
-      print('Error fetching supplement types: ${e.message}');
+      log('Error fetching supplement types: ${e.message}');
       return [];
     }
   }
@@ -130,7 +130,7 @@ class ApiService {
       }
       return [];
     } on DioException catch (e) {
-      print('Error fetching supplements: ${e.message}');
+      log('Error fetching supplements: ${e.message}');
       return [];
     }
   }
@@ -144,7 +144,7 @@ class ApiService {
       }
       return [];
     } on DioException catch (e) {
-      print('Error fetching user supplements: ${e.message}');
+      log('Error fetching user supplements: ${e.message}');
       return [];
     }
   }
@@ -172,7 +172,7 @@ class ApiService {
       }
       return null;
     } on DioException catch (e) {
-      print('Error adding user supplement: ${e.message}');
+      log('Error adding user supplement: ${e.message}');
       return null;
     }
   }
@@ -186,7 +186,7 @@ class ApiService {
       }
       return [];
     } on DioException catch (e) {
-      print('Error fetching intake logs: ${e.message}');
+      log('Error fetching intake logs: ${e.message}');
       return [];
     }
   }
@@ -207,7 +207,7 @@ class ApiService {
         'unit': safeUnit,
       };
 
-      print('Sending intake log data: $data');
+      log('Sending intake log data: $data');
 
       final response = await _dio.post(
         '$_baseUrl/IntakeLogs',
@@ -218,13 +218,13 @@ class ApiService {
       );
       
       log('API успішно зберіг запис з кодом: ${response.statusCode}');
-      print('API успішно зберіг запис з кодом: ${response.statusCode}');
+      log('API успішно зберіг запис з кодом: ${response.statusCode}');
 
       // Просто повертаємо порожній об'єкт, не намагаючись обробляти дані з сервера
       return {};
     } catch (e) {
       // Логуємо помилку, але не повертаємо null, щоб уникнути помилки при обробці
-      print('Error in addIntakeLog: $e');
+      log('Error in addIntakeLog: $e');
 
       // Повертаємо порожній об'єкт, щоб запобігти помилкам при обробці
       return {};

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
@@ -150,7 +151,7 @@ class _AddEditMedicationScreenState
           await reminderRepo.saveReminder(newReminder);
 
         // Для цілей відладки виведемо інформацію
-        print('Зберігаємо нагадування: ${newReminder.toJson()}');
+        log('Зберігаємо нагадування: ${newReminder.toJson()}');
 
         if (mounted) {
           Navigator.pop(context, newReminder);
@@ -286,7 +287,7 @@ class _AddEditMedicationScreenState
                       case ReminderFrequency.daily:
                         text = 'Щодня';
                         break;
-                      case ReminderFrequency.weekly:
+/*                       case ReminderFrequency.weekly:
                         text = 'Щотижня';
                         break;
                       case ReminderFrequency.monthly:
@@ -294,7 +295,7 @@ class _AddEditMedicationScreenState
                         break;
                       case ReminderFrequency.asNeeded:
                         text = 'За потребою';
-                        break;
+                        break; */
                     }
                     return DropdownMenuItem<ReminderFrequency>(
                       value: frequency,

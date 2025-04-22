@@ -1,8 +1,8 @@
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
-enum ReminderFrequency { daily, weekly, monthly, asNeeded }
-
+//enum ReminderFrequency { daily, weekly, monthly, asNeeded }
+enum ReminderFrequency { daily}
 class Reminder {
   final String id;
   final String userId;

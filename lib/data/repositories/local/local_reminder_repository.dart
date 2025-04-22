@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/repositories/local/local_storage_repository.dart';
@@ -26,7 +27,7 @@ class LocalReminderRepository {
           .map((json) => Reminder.fromJson(jsonDecode(json)))
           .toList();
     } catch (e) {
-      print('Error loading local reminders: $e');
+      log('Error loading local reminders: $e');
       return [];
     }
   }
@@ -53,7 +54,7 @@ class LocalReminderRepository {
       // Save to SharedPreferences
       return await _storage.saveStringList(_remindersKey, updatedJson);
     } catch (e) {
-      print('Error saving local reminder: $e');
+      log('Error saving local reminder: $e');
       return false;
     }
   }
@@ -72,7 +73,7 @@ class LocalReminderRepository {
       // Save to SharedPreferences
       return await _storage.saveStringList(_remindersKey, updatedJson);
     } catch (e) {
-      print('Error deleting local reminder: $e');
+      log('Error deleting local reminder: $e');
       return false;
     }
   }
@@ -100,7 +101,7 @@ class LocalReminderRepository {
       
       return false;
     } catch (e) {
-      print('Error marking reminder as taken: $e');
+      log('Error marking reminder as taken: $e');
       return false;
     }
   }
@@ -137,7 +138,7 @@ class LocalReminderRepository {
       
       return todayReminders;
     } catch (e) {
-      print('Error getting today reminders: $e');
+      log('Error getting today reminders: $e');
       return [];
     }
   }

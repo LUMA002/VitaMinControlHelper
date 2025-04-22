@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/models/supplement_type.dart';
@@ -101,19 +102,19 @@ class SupplementRepository {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        print('Successfully added supplement: ${response.data}');
+        log('Successfully added supplement: ${response.data}');
         // Return the supplement with the ID from the server
         final supplementFromServer = Supplement.fromJson(response.data);
         return supplementFromServer;
       } else {
-        print(
+        log(
           'Failed to add supplement: ${response.statusCode}, ${response.data}',
         );
         // If API returns error but we can still use the local supplement
         return supplement;
       }
     } catch (e) {
-      print('Exception when adding supplement: $e');
+      log('Exception when adding supplement: $e');
       // If there's an error with the API, we'll store the supplement locally
       // In a real implementation, you'd want to add this to a local database and sync later
       return supplement; // Return the original supplement for now

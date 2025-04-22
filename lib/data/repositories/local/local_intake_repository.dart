@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/repositories/local/local_storage_repository.dart';
@@ -26,25 +27,25 @@ class LocalIntakeRepository {
           .map((json) => IntakeLog.fromJson(jsonDecode(json)))
           .toList();
     } catch (e) {
-      print('Error loading local intake logs: $e');
+      log('Error loading local intake logs: $e');
       return [];
     }
   }
 
   /// Save an intake log
-  Future<bool> saveIntakeLog(IntakeLog log) async {
+  Future<bool> saveIntakeLog(IntakeLog intakeLog) async {
     try {
       final logs = getIntakeLogs();
       
       // Check if the log already exists
-      final existingIndex = logs.indexWhere((l) => l.id == log.id);
+      final existingIndex = logs.indexWhere((l) => l.id == intakeLog.id);
       
       if (existingIndex >= 0) {
         // Update existing log
-        logs[existingIndex] = log;
+        logs[existingIndex] = intakeLog;
       } else {
         // Add new log
-        logs.add(log);
+        logs.add(intakeLog);
       }
       
       // Convert logs to JSON strings
@@ -53,7 +54,7 @@ class LocalIntakeRepository {
       // Save to SharedPreferences
       return await _storage.saveStringList(_intakeLogsKey, updatedJson);
     } catch (e) {
-      print('Error saving local intake log: $e');
+      log('Error saving local intake log: $e');
       return false;
     }
   }
@@ -68,7 +69,7 @@ class LocalIntakeRepository {
                log.intakeTime.isBefore(end.add(const Duration(days: 1)));
       }).toList();
     } catch (e) {
-      print('Error getting intake logs for date range: $e');
+      log('Error getting intake logs for date range: $e');
       return [];
     }
   }

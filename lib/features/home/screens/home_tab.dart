@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/intake_log.dart';
@@ -9,10 +8,9 @@ import 'package:vita_min_control_helper/data/repositories/intake_repository.dart
 import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/local/local_reminder_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
-import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
+
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -73,7 +71,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       // Also update the provider
       ref.read(localRemindersProvider.notifier).state = reminders;
     } catch (e) {
-      print('Error loading local reminders: $e');
+      log('Error loading local reminders: $e');
       setState(() {
         _reminders = [];
         _todayReminders = [];
@@ -150,7 +148,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         log('Запис успішно додано в API');
       } catch (e) {
         // Логуємо помилку, але не перериваємо виконання
-        print(
+        log(
           'Помилка при збереженні в API: $e (НАСПАВДІ ЦЕ ЯКИЙСЬ ФЕЙК, дані на бек прийшли)',
         );
         // Не кидаємо виняток далі, бо дані вже збережені локально

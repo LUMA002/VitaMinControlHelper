@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vita_min_control_helper/data/models/user.dart';
@@ -76,7 +77,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         }
       }
     } catch (e) {
-      print('Error initializing auth: $e');
+      log('Error initializing auth: $e');
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -66,7 +67,7 @@ class _AddCustomSupplementScreenState
           newSupplement,
         );
 
-        print('Додано кастомний препарат: ${savedSupplement.toJson()}');
+        log('Додано кастомний препарат: ${savedSupplement.toJson()}');
 
         setState(() {
           _isLoading = false;
