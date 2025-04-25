@@ -5,12 +5,9 @@ import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
-import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/local/local_reminder_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
-
-
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -63,7 +60,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       final localReminderRepo = ref.read(localReminderRepositoryProvider);
       final reminders = localReminderRepo.getReminders();
 
-      
       setState(() {
         _reminders = reminders;
         _filterTodayReminders();
@@ -118,7 +114,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     try {
       final localReminderRepo = ref.read(localReminderRepositoryProvider);
       final intakeRepo = ref.read(intakeRepositoryProvider);
-      final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
 
       // Mark reminder as taken locally
       await localReminderRepo.markReminderAsTaken(reminder.id);
@@ -126,19 +121,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       // Переконуємося, що unit не буде null
       final safeUnit = reminder.unit;
 
-      // Create an intake log
+      // Create an intake log and send directly to API
       final now = DateTime.now();
-      final intakeLog = IntakeLog(
-        userSupplementId: reminder.supplementId,
-        intakeTime: now,
-        dosage: reminder.quantity,
-        unit: safeUnit,
-      );
 
-      // Save the intake log locally
-      await localIntakeRepo.saveIntakeLog(intakeLog);
-
-      // Виклик API в окремому блоку try-catch для ізоляції помилок
       try {
         await intakeRepo.addIntakeLog(
           reminder.supplementId,
@@ -148,11 +133,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         );
         log('Запис успішно додано в API');
       } catch (e) {
-        // Логуємо помилку, але не перериваємо виконання
-        log(
-          'Помилка при збереженні в API: $e (НАСПАВДІ ЦЕ ЯКИЙСЬ ФЕЙК, дані на бек прийшли)',
-        );
-        // Не кидаємо виняток далі, бо дані вже збережені локально
+        log('Помилка при збереженні в API: $e');
+        // We'll just show the error but continue with UI updates
       }
 
       // Update the UI

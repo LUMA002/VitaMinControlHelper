@@ -1,13 +1,11 @@
 import 'dart:developer';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
-import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
 
 class TrackingScreen extends ConsumerStatefulWidget {
   const TrackingScreen({super.key});
@@ -18,13 +16,13 @@ class TrackingScreen extends ConsumerStatefulWidget {
 
 class _TrackingScreenState extends ConsumerState<TrackingScreen> {
   List<Supplement> _supplements = [];
-  DateTime _selectedDate = DateTime.now();
-  String _selectedPeriod = 'Тиждень';
   String? _selectedSupplementId;
   bool _isLoading = true;
   String? _error;
 
   final List<String> _periods = ['Тиждень', 'Місяць', 'Рік'];
+  String _selectedPeriod = 'Тиждень';
+  final DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -39,30 +37,12 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     });
 
     try {
-      // load supplements from the API
+      // Load supplements from the API
       final supplementRepo = ref.read(supplementRepositoryProvider);
       final supplements = await supplementRepo.getSupplements();
 
-      // завантаження даних про прийом локально
-      final intakeRepo = ref.read(intakeRepositoryProvider);
-      final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
-
-      //  з API
-      List<IntakeLog> intakeLogs = [];
-      try {
-        intakeLogs = await intakeRepo.getIntakeLogs();
-        log("Loaded ${intakeLogs.length} intake logs from API");
-      } catch (e) {
-        log("Failed to load intake logs from API: $e");
-        // Якщо API недоступний, використовуємо локальні дані
-        intakeLogs = await localIntakeRepo.getIntakeLogs();
-        log("Loaded ${intakeLogs.length} intake logs from local storage");
-      }
-
       setState(() {
         _supplements = supplements;
-
-        // _intakeLogs = intakeLogs; //логи у стейті (завантажені дані)
         _isLoading = false;
       });
     } catch (e) {
@@ -73,8 +53,6 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     }
   }
 
-
-  // mb temporary remake only with week optipon
   DateTime _getStartDate() {
     final now = DateTime.now();
 
@@ -137,13 +115,17 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     return supplement.name;
   }
 
-  Map<DateTime, int> _getDailyIntakeCount() {
-    final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
+  // Modified to use the API repository with async methods
+  Future<Map<DateTime, int>> _getDailyIntakeCount() async {
+    final intakeRepo = ref.read(intakeRepositoryProvider);
     final startDate = _getStartDate();
     final endDate = _getEndDate();
 
     // Filter by selected supplement if one is selected
-    final dailyCounts = localIntakeRepo.getDailyIntakeCount(startDate, endDate);
+    final dailyCounts = await intakeRepo.getDailyIntakeCount(
+      startDate,
+      endDate,
+    );
 
     // If no supplement is selected, return all counts
     if (_selectedSupplementId == null) {
@@ -151,31 +133,33 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     }
 
     // Filter log entries by the selected supplement
-    final logs =
-        localIntakeRepo
-            .getIntakeLogsForDateRange(startDate, endDate)
+    final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
+    final filteredLogs =
+        logs
             .where((log) => log.userSupplementId == _selectedSupplementId)
             .toList();
 
     final Map<DateTime, int> filteredCounts = {};
-    for (var log in logs) {
+    for (var log in filteredLogs) {
       final day = DateTime(
         log.intakeTime.year,
         log.intakeTime.month,
         log.intakeTime.day,
       );
+
       filteredCounts[day] = (filteredCounts[day] ?? 0) + 1;
     }
 
     return filteredCounts;
   }
 
-  Map<String, int> _getSupplementIntakeCount() {
-    final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
+  // Modified to use the API repository with async methods
+  Future<Map<String, int>> _getSupplementIntakeCount() async {
+    final intakeRepo = ref.read(intakeRepositoryProvider);
     final startDate = _getStartDate();
     final endDate = _getEndDate();
 
-    final logs = localIntakeRepo.getIntakeLogsForDateRange(startDate, endDate);
+    final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
     final Map<String, int> supplementCounts = {};
 
     for (var log in logs) {
@@ -187,54 +171,86 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     return supplementCounts;
   }
 
-  List<BarChartGroupData> _getBarGroups(BuildContext context) {
+  List<BarChartGroupData> _getBarGroups(
+    BuildContext context,
+    Map<DateTime, int> dailyCounts,
+  ) {
     final theme = Theme.of(context);
-    final dailyCounts = _getDailyIntakeCount();
     final dates = _getDatesInRange();
-    final List<BarChartGroupData> groups = [];
 
-    for (int i = 0; i < dates.length; i++) {
-      final date = dates[i];
+    return dates.asMap().entries.map((entry) {
+      final index = entry.key;
+      final date = entry.value;
       final count = dailyCounts[date] ?? 0;
 
-      groups.add(
-        BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              toY: count.toDouble(),
-              color: theme.colorScheme.primary,
-              width: _selectedPeriod == 'Рік' ? 8 : 16,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(6),
-                topRight: Radius.circular(6),
-              ),
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: count.toDouble(),
+            color: theme.colorScheme.primary,
+            width: 16,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
             ),
-          ],
-        ),
+          ),
+        ],
       );
-    }
-
-    return groups;
+    }).toList();
   }
 
-  String _getDateLabel(int index) {
-    final dates = _getDatesInRange();
-    if (index >= 0 && index < dates.length) {
-      final date = dates[index];
+  List<PieChartSectionData> _getPieSections(
+    BuildContext context,
+    Map<String, int> supplementCounts,
+  ) {
+    final theme = Theme.of(context);
+    final colors = [
+      theme.colorScheme.primary,
+      theme.colorScheme.secondary,
+      theme.colorScheme.tertiary,
+      Colors.amber,
+      Colors.green,
+      Colors.purple,
+      Colors.teal,
+      Colors.pink,
+      Colors.brown,
+      Colors.indigo,
+    ];
 
-      switch (_selectedPeriod) {
-        case 'Тиждень':
-          return DateFormat('EE').format(date); // Mon, Tue, etc.
-        case 'Місяць':
-          return date.day.toString();
-        case 'Рік':
-          return DateFormat('MMM').format(date); // Jan, Feb, etc.
-        default:
-          return DateFormat('d').format(date);
-      }
-    }
-    return '';
+    final sortedEntries =
+        supplementCounts.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
+    // Limit to top 10 supplements
+    final entries = sortedEntries.take(10).toList();
+    final total = entries.fold(0, (sum, entry) => sum + entry.value);
+
+    if (total == 0) return [];
+
+    return entries.asMap().entries.map((mapEntry) {
+      final index = mapEntry.key;
+      final entry = mapEntry.value;
+      final percentage = entry.value / total * 100;
+
+      return PieChartSectionData(
+        color: colors[index % colors.length],
+        value: entry.value.toDouble(),
+        title: '${percentage.toStringAsFixed(1)}%',
+        radius: 100,
+        titleStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        badgeWidget: _Badge(
+          entry.key,
+          size: 30,
+          borderColor: colors[index % colors.length],
+        ),
+        badgePositionPercentageOffset: 1.0,
+      );
+    }).toList();
   }
 
   @override
@@ -246,259 +262,350 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     }
 
     if (_error != null) {
-      return Center(child: Text(_error!));
-    }
-
-    final supplementCounts = _getSupplementIntakeCount();
-    final barGroups = _getBarGroups(context);
-
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      return Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Period selection
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Період:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                DropdownButton<String>(
-                  value: _selectedPeriod,
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedPeriod = newValue;
-                      });
-                    }
-                  },
-                  items:
-                      _periods.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Supplement filter
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Добавка:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                DropdownButton<String?>(
-                  value: _selectedSupplementId,
-                  hint: const Text('Всі добавки'),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedSupplementId = newValue;
-                    });
-                  },
-                  items: [
-                    const DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text('Всі добавки'),
-                    ),
-                    ..._supplements.map<DropdownMenuItem<String>>((supplement) {
-                      return DropdownMenuItem<String>(
-                        value: supplement.id,
-                        child: Text(supplement.name),
-                      );
-                    }), //.toList(),
-                  ],
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Bar chart
             Text(
-              'Прийоми добавок за період',
-              style: theme.textTheme.titleLarge,
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: theme.colorScheme.error),
             ),
-            const SizedBox(height: 8),
-            Container(
-              height: 300,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child:
-                  barGroups.isEmpty
-                      ? const Center(
-                        child: Text('Немає даних для відображення'),
-                      )
-                      : BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY:
-                              barGroups.fold(0.0, (max, group) {
-                                final rodMax = group.barRods.fold(
-                                  0.0,
-                                  (m, rod) => rod.toY > m ? rod.toY : m,
-                                );
-                                return rodMax > max ? rodMax : max;
-                              }) +
-                              1, // Add some padding at the top
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              getTooltipColor: (theme) {
-                                return Theme.of(context).colorScheme.primary.withValues(
-                                  alpha: 0.8,
-                                );
-                              },
-                              tooltipPadding: const EdgeInsets.all(8),
-                              tooltipMargin: 8,
-                              getTooltipItem: (
-                                group,
-                                groupIndex,
-                                rod,
-                                rodIndex,
-                              ) {
-                                final count = rod.toY.toInt();
-                                final date = _getDatesInRange()[groupIndex];
-                                return BarTooltipItem(
-                                  '${DateFormat('d MMM').format(date)}\n$count прийомів',
-                                  TextStyle(
-                                    color: theme.colorScheme.onSurface,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  return SideTitleWidget(
-                                    meta: meta,
-                                    child: Text(
-                                      _getDateLabel(value.toInt()),
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                reservedSize: 30,
-                              ),
-                            ),
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  if (value == 0) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return SideTitleWidget(
-                                    meta: meta,
-                                    child: Text(
-                                      value.toInt().toString(),
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                reservedSize: 30,
-                              ),
-                            ),
-                            rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          borderData: FlBorderData(show: false),
-                          gridData: const FlGridData(
-                            show: true,
-                            drawHorizontalLine: true,
-                            drawVerticalLine: false,
-                          ),
-                          barGroups: barGroups,
-                        ),
-                      ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Supplement statistics
-            Text('Статистика по добавках', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Expanded(
-              child:
-                  supplementCounts.isEmpty
-                      ? const Center(
-                        child: Text('Немає даних для відображення'),
-                      )
-                      : ListView(
-                        children: () {
-                          final entries = supplementCounts.entries.toList();
-                          entries.sort((a, b) => b.value.compareTo(a.value));
-                          return entries.map((entry) {
-                            final percentage =
-                                supplementCounts.values.sum == 0
-                                    ? 0.0
-                                    : entry.value /
-                                        supplementCounts.values.sum *
-                                        100;
-
-                            return ListTile(
-                              title: Text(entry.key),
-                              subtitle: LinearProgressIndicator(
-                                value: percentage / 100,
-                                backgroundColor: theme.colorScheme.primary
-                                    .withValues(alpha: 0.2),
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  theme.colorScheme.primary,
-                                ),
-                              ),
-                              trailing: Text(
-                                '${entry.value} (${percentage.toStringAsFixed(1)}%)',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          }).toList();
-                        }(),
-                      ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadData,
+              child: const Text('Спробувати знову'),
             ),
           ],
+        ),
+      );
+    }
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Статистика'),
+          bottom: const TabBar(
+            tabs: [Tab(text: 'Щоденно'), Tab(text: 'Добавки')],
+          ),
+        ),
+        body: TabBarView(
+          children: [_buildDailyTab(theme), _buildSupplementsTab(theme)],
         ),
       ),
     );
   }
+
+  Widget _buildDailyTab(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildFilters(theme),
+          const SizedBox(height: 24),
+          Expanded(
+            child: FutureBuilder<Map<DateTime, int>>(
+              future: _getDailyIntakeCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Помилка завантаження даних: ${snapshot.error}',
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  );
+                }
+
+                final dailyCounts = snapshot.data ?? {};
+                final barGroups = _getBarGroups(context, dailyCounts);
+
+                if (barGroups.isEmpty) {
+                  return const Center(
+                    child: Text('Немає даних для відображення'),
+                  );
+                }
+
+                return BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY:
+                        barGroups.fold(0.0, (max, group) {
+                          final groupMax = group.barRods.fold(
+                            0.0,
+                            (max, rod) => rod.toY > max ? rod.toY : max,
+                          );
+                          return groupMax > max ? groupMax : max;
+                        }) +
+                        1,
+                    barTouchData: BarTouchData(
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) =>  Theme.of(context).colorScheme.primary,
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          final date = _getDatesInRange()[group.x];
+                          return BarTooltipItem(
+                            '${date.day}.${date.month}: ${rod.toY.toInt()} прийомів',
+                            TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            final index = value.toInt();
+                            if (index < 0 ||
+                                index >= _getDatesInRange().length) {
+                              return const SizedBox();
+                            }
+                            final date = _getDatesInRange()[index];
+                            switch (_selectedPeriod) {
+                              case 'Тиждень':
+                                final weekdays = [
+                                  'Пн',
+                                  'Вт',
+                                  'Ср',
+                                  'Чт',
+                                  'Пт',
+                                  'Сб',
+                                  'Нд',
+                                ];
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(weekdays[index % 7]),
+                                );
+                              case 'Місяць':
+                                // Only show every few days
+                                if (index % 3 == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text('${date.day}'),
+                                  );
+                                }
+                                return const SizedBox();
+                              case 'Рік':
+                                final months = [
+                                  'С',
+                                  'Л',
+                                  'Б',
+                                  'К',
+                                  'Т',
+                                  'Ч',
+                                  'Л',
+                                  'С',
+                                  'В',
+                                  'Ж',
+                                  'Л',
+                                  'Г',
+                                ];
+                                if (date.day == 15) {
+                                  // Show only middle of month
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(months[date.month - 1]),
+                                  );
+                                }
+                                return const SizedBox();
+                              default:
+                                return const SizedBox();
+                            }
+                          },
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 30,
+                          getTitlesWidget: (value, meta) {
+                            if (value == 0) {
+                              return const SizedBox();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Text(value.toInt().toString()),
+                            );
+                          },
+                        ),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                    ),
+                    borderData: FlBorderData(show: false),
+                    gridData: const FlGridData(show: false),
+                    barGroups: barGroups,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupplementsTab(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPeriodFilter(theme),
+          const SizedBox(height: 24),
+          Expanded(
+            child: FutureBuilder<Map<String, int>>(
+              future: _getSupplementIntakeCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Помилка завантаження даних: ${snapshot.error}',
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  );
+                }
+
+                final supplementCounts = snapshot.data ?? {};
+
+                if (supplementCounts.isEmpty) {
+                  return const Center(
+                    child: Text('Немає даних для відображення'),
+                  );
+                }
+
+                return PieChart(
+                  PieChartData(
+                    sections: _getPieSections(context, supplementCounts),
+                    centerSpaceRadius: 40,
+                    sectionsSpace: 0,
+                    pieTouchData: PieTouchData(
+                      touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilters(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Фільтри', style: theme.textTheme.titleLarge),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: _buildPeriodFilter(theme)),
+            const SizedBox(width: 16),
+            Expanded(child: _buildSupplementFilter(theme)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPeriodFilter(ThemeData theme) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: 'Період',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      value: _selectedPeriod,
+      items:
+          _periods.map((period) {
+            return DropdownMenuItem<String>(value: period, child: Text(period));
+          }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() {
+            _selectedPeriod = value;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildSupplementFilter(ThemeData theme) {
+    return DropdownButtonFormField<String?>(
+      decoration: InputDecoration(
+        labelText: 'Добавка',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      value: _selectedSupplementId,
+      items: [
+        const DropdownMenuItem<String?>(
+          value: null,
+          child: Text('Всі добавки'),
+        ),
+        ..._supplements.map((supplement) {
+          return DropdownMenuItem<String?>(
+            value: supplement.id,
+            child: Text(supplement.name),
+          );
+        }).toList(),
+      ],
+      onChanged: (value) {
+        setState(() {
+          _selectedSupplementId = value;
+        });
+      },
+    );
+  }
 }
 
-extension IterableSum on Iterable<int> {
-  int get sum => fold(0, (a, b) => a + b);
+class _Badge extends StatelessWidget {
+  final String text;
+  final double size;
+  final Color borderColor;
+
+  const _Badge(this.text, {required this.size, required this.borderColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: PieChart.defaultDuration,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withOpacity(.5),
+            offset: const Offset(3, 3),
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          text.length > 3 ? text.substring(0, 3) : text,
+          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
 }
