@@ -63,6 +63,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       final localReminderRepo = ref.read(localReminderRepositoryProvider);
       final reminders = localReminderRepo.getReminders();
 
+      
       setState(() {
         _reminders = reminders;
         _filterTodayReminders();
@@ -123,7 +124,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       await localReminderRepo.markReminderAsTaken(reminder.id);
 
       // Переконуємося, що unit не буде null
-      final safeUnit = reminder.unit ?? 'шт';
+      final safeUnit = reminder.unit;
 
       // Create an intake log
       final now = DateTime.now();

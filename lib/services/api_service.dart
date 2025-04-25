@@ -1,5 +1,6 @@
 import 'dart:developer';
-
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
@@ -8,10 +9,21 @@ class ApiService {
   final Dio _dio;
   final Ref _ref;
   // Важлива зміна змінної, не використовувати localhost!!!
-  final String _baseUrl = 'http://10.0.2.2:5241/api';
+  //final String _baseUrl = 'http://10.0.2.2:5241/api';
 
   // Make baseUrl accessible via a getter
-  String get baseUrl => _baseUrl;
+  String get baseUrl {
+    if (Platform.isWindows) {
+      return 'http://localhost:5241/api';
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      return 'http://10.0.2.2:5241/api'; // для Android емулятора, айос під питанням
+    } /* else if (kIsWeb) {
+      return 'http://localhost:5241/api';/*  веб теж під питанням через безпеку 
+      (наразі проблема із використанням package fluttersecurestorage, не 
+      підтримується поки для вебу) */
+    } */
+    return 'http://localhost:5241/api'; // За замовчуванням
+  }
 
   ApiService(this._ref) : _dio = Dio() {
     _dio.interceptors.add(
@@ -41,7 +53,7 @@ class ApiService {
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/Auth/Login',
+        '$baseUrl/Auth/Login',
         data: {'email': email, 'password': password},
       );
 
@@ -89,7 +101,7 @@ class ApiService {
         data['weight'] = weight;
       }
 
-      final response = await _dio.post('$_baseUrl/Auth/Register', data: data);
+      final response = await _dio.post('$baseUrl/Auth/Register', data: data);
 
       if (response.statusCode == 200) {
         return response.data;
@@ -104,7 +116,7 @@ class ApiService {
   // Методи для доступу до даних
   Future<List<Map<String, dynamic>>> getSupplementTypes() async {
     try {
-      final response = await _dio.get('$_baseUrl/SupplementTypes');
+      final response = await _dio.get('$baseUrl/SupplementTypes');
 
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data);
@@ -118,7 +130,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getSupplements({bool? isGlobal}) async {
     try {
-      String url = '$_baseUrl/Supplements';
+      String url = '$baseUrl/Supplements';
       if (isGlobal != null) {
         url += '?global=$isGlobal';
       }
@@ -137,7 +149,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getUserSupplements() async {
     try {
-      final response = await _dio.get('$_baseUrl/UserSupplements');
+      final response = await _dio.get('$baseUrl/UserSupplements');
 
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data);
@@ -165,7 +177,7 @@ class ApiService {
         data['defaultUnit'] = defaultUnit;
       }
 
-      final response = await _dio.post('$_baseUrl/UserSupplements', data: data);
+      final response = await _dio.post('$baseUrl/UserSupplements', data: data);
 
       if (response.statusCode == 201) {
         return response.data;
@@ -179,7 +191,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getIntakeLogs() async {
     try {
-      final response = await _dio.get('$_baseUrl/IntakeLogs');
+      final response = await _dio.get('$baseUrl/IntakeLogs');
 
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data);
@@ -210,24 +222,33 @@ class ApiService {
       log('Sending intake log data: $data');
 
       final response = await _dio.post(
-        '$_baseUrl/IntakeLogs',
+        '$baseUrl/IntakeLogs',
         data: data,
         options: Options(
           validateStatus: (status) => status! >= 200 && status < 300,
         ),
       );
-      
-      log('API успішно зберіг запис з кодом: ${response.statusCode}');
+
       log('API успішно зберіг запис з кодом: ${response.statusCode}');
 
-      // Просто повертаємо порожній об'єкт, не намагаючись обробляти дані з сервера
-      return {};
+      // Повертаємо фактичні дані з відповіді API
+      if (response.data != null && response.data is Map<String, dynamic>) {
+        log('Отримані дані з сервера: ${response.data}');
+        return response.data;
+      } else {
+        // Якщо з якоїсь причини відповідь порожня, створюємо сумісний об'єкт
+        log('Відповідь від сервера порожня або неправильного формату');
+        return {
+          /*           'id': '', // Сервер повинен генерувати ID
+          'userSupplementId': userSupplementId,
+          'intakeTime': intakeTime.toIso8601String(),
+          'dosage': dosage ?? 1.0,
+          'unit': safeUnit, */
+        };
+      }
     } catch (e) {
-      // Логуємо помилку, але не повертаємо null, щоб уникнути помилки при обробці
       log('Error in addIntakeLog: $e');
-
-      // Повертаємо порожній об'єкт, щоб запобігти помилкам при обробці
-      return {};
+      throw Exception('Failed to add intake log: $e');
     }
   }
 }

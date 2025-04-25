@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
+import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/local/local_intake_repository.dart';
 
-
 class TrackingScreen extends ConsumerStatefulWidget {
-  const TrackingScreen({Key? key}) : super(key: key);
+  const TrackingScreen({super.key});
 
   @override
   ConsumerState<TrackingScreen> createState() => _TrackingScreenState();
@@ -38,12 +39,30 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     });
 
     try {
-      // Load supplements from the API
+      // load supplements from the API
       final supplementRepo = ref.read(supplementRepositoryProvider);
       final supplements = await supplementRepo.getSupplements();
 
+      // завантаження даних про прийом локально
+      final intakeRepo = ref.read(intakeRepositoryProvider);
+      final localIntakeRepo = ref.read(localIntakeRepositoryProvider);
+
+      //  з API
+      List<IntakeLog> intakeLogs = [];
+      try {
+        intakeLogs = await intakeRepo.getIntakeLogs();
+        log("Loaded ${intakeLogs.length} intake logs from API");
+      } catch (e) {
+        log("Failed to load intake logs from API: $e");
+        // Якщо API недоступний, використовуємо локальні дані
+        intakeLogs = await localIntakeRepo.getIntakeLogs();
+        log("Loaded ${intakeLogs.length} intake logs from local storage");
+      }
+
       setState(() {
         _supplements = supplements;
+
+        // _intakeLogs = intakeLogs; //логи у стейті (завантажені дані)
         _isLoading = false;
       });
     } catch (e) {
@@ -54,22 +73,24 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     }
   }
 
+
+  // mb temporary remake only with week optipon
   DateTime _getStartDate() {
     final now = DateTime.now();
 
     switch (_selectedPeriod) {
       case 'Тиждень':
-        // Start from Monday of the current week
+        // start from Monday of the current week
         return DateTime(
           now.year,
           now.month,
           now.day,
         ).subtract(Duration(days: now.weekday - 1));
       case 'Місяць':
-        // Start from the first day of the month
+        // start from the first day of the month
         return DateTime(now.year, now.month, 1);
       case 'Рік':
-        // Start from the first day of the year
+        // start from the first day of the year
         return DateTime(now.year, 1, 1);
       default:
         return DateTime(
@@ -293,7 +314,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                         value: supplement.id,
                         child: Text(supplement.name),
                       );
-                    }).toList(),
+                    }), //.toList(),
                   ],
                 ),
               ],
@@ -341,7 +362,11 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                           barTouchData: BarTouchData(
                             enabled: true,
                             touchTooltipData: BarTouchTooltipData(
-                             // getTooltipColor: theme.colorScheme.surface,
+                              getTooltipColor: (theme) {
+                                return Theme.of(context).colorScheme.primary.withValues(
+                                  alpha: 0.8,
+                                );
+                              },
                               tooltipPadding: const EdgeInsets.all(8),
                               tooltipMargin: 8,
                               getTooltipItem: (
@@ -387,8 +412,9 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 getTitlesWidget: (value, meta) {
-                                  if (value == 0)
+                                  if (value == 0) {
                                     return const SizedBox.shrink();
+                                  }
                                   return SideTitleWidget(
                                     meta: meta,
                                     child: Text(
