@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';
 import 'package:vita_min_control_helper/data/repositories/supplement_repository.dart';
@@ -228,10 +227,17 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
     if (total == 0) return [];
 
+    // Обчислюємо загальну кількість елементів для рівномірного розподілу
+    final int sectionCount = entries.length;
+
     return entries.asMap().entries.map((mapEntry) {
       final index = mapEntry.key;
       final entry = mapEntry.value;
       final percentage = entry.value / total * 100;
+
+      // Розташування значків на однаковій відстані від центру, але під різними кутами
+      // для запобігання накладанню при однакових відсотках
+      final double badgeOffset = 1.2;
 
       return PieChartSectionData(
         color: colors[index % colors.length],
@@ -243,12 +249,14 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
+        // Розміщуємо значки в рівномірно розподілених позиціях,
+        // навіть якщо сегменти незбалансовані за розміром
         badgeWidget: _Badge(
           entry.key,
-          size: 30,
+          size: 55,
           borderColor: colors[index % colors.length],
         ),
-        badgePositionPercentageOffset: 1.0,
+        badgePositionPercentageOffset: badgeOffset,
       );
     }).toList();
   }
@@ -345,7 +353,8 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                         1,
                     barTouchData: BarTouchData(
                       touchTooltipData: BarTouchTooltipData(
-                        getTooltipColor: (group) =>  Theme.of(context).colorScheme.primary,
+                        getTooltipColor:
+                            (group) => Theme.of(context).colorScheme.primary,
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           final date = _getDatesInRange()[group.x];
                           return BarTooltipItem(
@@ -382,14 +391,14 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                                   'Нд',
                                 ];
                                 return Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
+                                  padding: const EdgeInsets.only(top: 4.0),
                                   child: Text(weekdays[index % 7]),
                                 );
                               case 'Місяць':
                                 // Only show every few days
                                 if (index % 3 == 0) {
                                   return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
+                                    padding: const EdgeInsets.only(top: 4.0),
                                     child: Text('${date.day}'),
                                   );
                                 }
@@ -412,7 +421,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                                 if (date.day == 15) {
                                   // Show only middle of month
                                   return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
+                                    padding: const EdgeInsets.only(top: 4.0),
                                     child: Text(months[date.month - 1]),
                                   );
                                 }
@@ -491,15 +500,112 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                   );
                 }
 
-                return PieChart(
-                  PieChartData(
-                    sections: _getPieSections(context, supplementCounts),
-                    centerSpaceRadius: 40,
-                    sectionsSpace: 0,
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+                // Сортуємо добавки за кількістю вживань (від більшої до меншої)
+                final sortedEntries =
+                    supplementCounts.entries.toList()
+                      ..sort((a, b) => b.value.compareTo(a.value));
+                final entries = sortedEntries.take(10).toList();
+                final total = entries.fold(
+                  0,
+                  (sum, entry) => sum + entry.value,
+                );
+
+                // Створюємо список кольорів для легенди
+                final colors = [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                  theme.colorScheme.tertiary,
+                  Colors.amber,
+                  Colors.green,
+                  Colors.purple,
+                  Colors.teal,
+                  Colors.pink,
+                  Colors.brown,
+                  Colors.indigo,
+                ];
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: PieChart(
+                        PieChartData(
+                          sections: _getPieSections(context, supplementCounts),
+                          centerSpaceRadius: 40,
+                          sectionsSpace: 0,
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {},
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    // Додаємо легенду
+                    Container(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceVariant.withOpacity(
+                          0.3,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Легенда',
+                            style: theme.textTheme.titleMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          // Показуємо список добавок з кольоровими маркерами
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 150),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    entries.asMap().entries.map((mapEntry) {
+                                      final index = mapEntry.key;
+                                      final entry = mapEntry.value;
+                                      final percentage =
+                                          entry.value / total * 100;
+
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 16,
+                                              height: 16,
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    colors[index %
+                                                        colors.length],
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                '${entry.key} - ${percentage.toStringAsFixed(1)}%',
+                                                style:
+                                                    theme.textTheme.bodyMedium,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -601,9 +707,20 @@ class _Badge extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: Text(
-          text.length > 3 ? text.substring(0, 3) : text,
-          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              // Збільшуємо кількість символів для відображення
+              text.length > 10 ? text.substring(0, 10) : text,
+              style: TextStyle(
+                fontSize: size * 0.28, // Пропорційний розмір шрифту
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       ),
     );
