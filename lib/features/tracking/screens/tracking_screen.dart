@@ -100,6 +100,16 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final endDate = _getEndDate();
 
     final dayCount = endDate.difference(startDate).inDays + 1;
+
+    // Обмежуємо кількість дат для відображення при виборі "Рік"
+  if (_selectedPeriod == 'Рік') {
+    // Групуємо по місяцях замість днів
+    List<DateTime> monthDates = [];
+    for (int month = 1; month <= 12; month++) {
+      monthDates.add(DateTime(_selectedDate.year, month, 15)); // Середина кожного місяця
+    }
+    return monthDates;
+  }
     return List.generate(
       dayCount,
       (index) => startDate.add(Duration(days: index)),
@@ -126,6 +136,17 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
       endDate,
     );
 
+  // Якщо вибрано "Рік", групуємо дані по місяцях
+  if (_selectedPeriod == 'Рік') {
+    final Map<DateTime, int> monthlyCounts = {};
+    
+    for (var entry in dailyCounts.entries) {
+      final monthDate = DateTime(entry.key.year, entry.key.month, 15); // Середина місяця
+      monthlyCounts[monthDate] = (monthlyCounts[monthDate] ?? 0) + entry.value;
+    }
+    
+    return monthlyCounts;
+  }
     // If no supplement is selected, return all counts
     if (_selectedSupplementId == null) {
       return dailyCounts;
@@ -541,8 +562,8 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                     // Додаємо легенду
                     Container(
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant.withOpacity(
-                          0.3,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: .3,
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -668,7 +689,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
             value: supplement.id,
             child: Text(supplement.name),
           );
-        }).toList(),
+        })//.toList(),
       ],
       onChanged: (value) {
         setState(() {
@@ -698,7 +719,7 @@ class _Badge extends StatelessWidget {
         border: Border.all(color: borderColor, width: 2),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(.5),
+            color: Colors.black.withValues(alpha: .5),
             offset: const Offset(3, 3),
             blurRadius: 3,
           ),
