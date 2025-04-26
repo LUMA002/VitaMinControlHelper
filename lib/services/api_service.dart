@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';

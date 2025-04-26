@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vita_min_control_helper/data/models/intake_log.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/data/models/supplement.dart';
 import 'package:vita_min_control_helper/data/repositories/intake_repository.dart';

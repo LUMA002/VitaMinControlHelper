@@ -227,9 +227,6 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
     if (total == 0) return [];
 
-    // Обчислюємо загальну кількість елементів для рівномірного розподілу
-    final int sectionCount = entries.length;
-
     return entries.asMap().entries.map((mapEntry) {
       final index = mapEntry.key;
       final entry = mapEntry.value;
@@ -291,16 +288,17 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Статистика'),
-          bottom: const TabBar(
-            tabs: [Tab(text: 'Щоденно'), Tab(text: 'Добавки')],
+      child: Column(
+        children: [
+          // Тільки TabBar без AppBar
+          const TabBar(tabs: [Tab(text: 'Щоденно'), Tab(text: 'Добавки')]),
+          // Решта контенту
+          Expanded(
+            child: TabBarView(
+              children: [_buildDailyTab(theme), _buildSupplementsTab(theme)],
+            ),
           ),
-        ),
-        body: TabBarView(
-          children: [_buildDailyTab(theme), _buildSupplementsTab(theme)],
-        ),
+        ],
       ),
     );
   }
