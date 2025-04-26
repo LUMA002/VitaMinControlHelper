@@ -2,19 +2,20 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
 //enum ReminderFrequency { daily, weekly, monthly, asNeeded }
-enum ReminderFrequency { daily}
+enum ReminderFrequency { daily }
+
 class Reminder {
   final String id;
   final String userId;
   final String supplementId;
   final ReminderFrequency? frequency;
   final TimeOfDay? timeToTake;
-  final double quantity;
+  final int quantity;
+  final double? dosage; // Додано нове поле для дозування активної речовини
   final String unit;
   final DateTime? nextReminder;
   final bool isConfirmed;
   final int stockAmount;
-  final double? activeIngredientAmount;
   final String? measurementUnit;
 
   Reminder({
@@ -24,11 +25,11 @@ class Reminder {
     this.frequency,
     this.timeToTake,
     required this.quantity,
+    required this.dosage, // Додано параметр dosage
     required this.unit,
     this.nextReminder,
     this.isConfirmed = false,
     this.stockAmount = 0,
-    this.activeIngredientAmount,
     this.measurementUnit,
   }) : id = id ?? const Uuid().v4();
 
@@ -49,6 +50,7 @@ class Reminder {
               )
               : null,
       quantity: json['quantity'],
+      dosage: json['dosage'], // Додано параметр dosage
       unit: json['unit'],
       nextReminder:
           json['nextReminder'] != null
@@ -56,7 +58,6 @@ class Reminder {
               : null,
       isConfirmed: json['isConfirmed'] ?? false,
       stockAmount: json['stockAmount'] ?? 0,
-      activeIngredientAmount: json['activeIngredientAmount'],
       measurementUnit: json['measurementUnit'],
     );
   }
@@ -72,11 +73,11 @@ class Reminder {
               ? '${timeToTake!.hour.toString().padLeft(2, '0')}:${timeToTake!.minute.toString().padLeft(2, '0')}'
               : null,
       'quantity': quantity,
+      'dosage': dosage, // Додано параметр dosage
       'unit': unit,
       'nextReminder': nextReminder?.toIso8601String(),
       'isConfirmed': isConfirmed,
       'stockAmount': stockAmount,
-      'activeIngredientAmount': activeIngredientAmount,
       'measurementUnit': measurementUnit,
     };
   }
@@ -86,7 +87,8 @@ class Reminder {
     String? formId,
     ReminderFrequency? frequency,
     TimeOfDay? timeToTake,
-    double? quantity,
+    int? quantity,
+    double? dosage, // Додано параметр dosage
     String? unit,
     DateTime? nextReminder,
     bool? isConfirmed,
@@ -101,12 +103,11 @@ class Reminder {
       frequency: frequency ?? this.frequency,
       timeToTake: timeToTake ?? this.timeToTake,
       quantity: quantity ?? this.quantity,
+      dosage: dosage ?? this.dosage, // Додано параметр dosage
       unit: unit ?? this.unit,
       nextReminder: nextReminder ?? this.nextReminder,
       isConfirmed: isConfirmed ?? this.isConfirmed,
       stockAmount: stockAmount ?? this.stockAmount,
-      activeIngredientAmount:
-          activeIngredientAmount ?? this.activeIngredientAmount,
       measurementUnit: measurementUnit ?? this.measurementUnit,
     );
   }

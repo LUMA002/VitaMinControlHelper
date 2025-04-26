@@ -117,7 +117,8 @@ class IntakeRepository {
   Future<IntakeLog> addIntakeLog(
     String userSupplementId,
     DateTime intakeTime, {
-    double? dosage,
+    int quantity = 1, // Змінено тип на int зі значенням за замовчуванням
+    double? dosage, // Додано нове поле для дозування
     String? unit,
   }) async {
     try {
@@ -125,7 +126,8 @@ class IntakeRepository {
       final responseData = await apiService.addIntakeLog(
         userSupplementId,
         intakeTime,
-        dosage: dosage,
+        quantity: quantity, // Передаємо нове поле quantity
+        dosage: dosage, // Передаємо значення dosage
         unit: unit,
       );
 

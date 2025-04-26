@@ -31,9 +31,8 @@ class _AddEditMedicationScreenState
   ReminderFrequency? _frequency = ReminderFrequency.daily;
   TimeOfDay _timeToTake = const TimeOfDay(hour: 8, minute: 0);
   final _quantityController = TextEditingController(text: '1');
-
+  final _dosageController = TextEditingController();
   final _stockAmountController = TextEditingController();
-  final _activeIngredientController = TextEditingController();
   String _measurementUnit = 'мг';
   final bool _showTimePicker = true;
 
@@ -69,13 +68,16 @@ class _AddEditMedicationScreenState
           _timeToTake = widget.reminder!.timeToTake!;
         }
         _quantityController.text = widget.reminder!.quantity.toString();
+        _dosageController.text =
+            widget.reminder!.dosage?.toString() ??
+            ''; // Заповнюємо поле дозування, якщо воно є
         _measurementUnit = widget.reminder!.unit;
         if (widget.reminder!.stockAmount > 0) {
           _stockAmountController.text = widget.reminder!.stockAmount.toString();
         }
-        if (widget.reminder!.activeIngredientAmount != null) {
-          _activeIngredientController.text =
-              widget.reminder!.activeIngredientAmount.toString();
+        if (widget.reminder!.dosage != null) {
+          _dosageController.text =
+              widget.reminder!.dosage.toString();
         }
         if (widget.reminder!.measurementUnit != null) {
           _measurementUnit = widget.reminder!.measurementUnit!;
@@ -93,7 +95,7 @@ class _AddEditMedicationScreenState
   void dispose() {
     _quantityController.dispose();
     _stockAmountController.dispose();
-    _activeIngredientController.dispose();
+    _dosageController.dispose();
     super.dispose();
   }
 
@@ -127,28 +129,30 @@ class _AddEditMedicationScreenState
           supplementId: _selectedSupplementId!,
           frequency: _frequency!,
           timeToTake: _showTimePicker ? _timeToTake : null,
-          quantity: double.parse(_quantityController.text),
+          quantity: int.parse(
+            _quantityController.text,
+          ), // Змінено з double.parse на int.parse
           unit: _measurementUnit,
+          dosage:
+              _dosageController.text.isNotEmpty
+                  ? double.parse(_dosageController.text)
+                  : null,
           stockAmount:
               _stockAmountController.text.isNotEmpty
                   ? int.parse(_stockAmountController.text)
                   : 0,
           isConfirmed: false,
           nextReminder: DateTime.now(),
-          activeIngredientAmount:
-              _activeIngredientController.text.isNotEmpty
-                  ? double.parse(_activeIngredientController.text)
-                  : null,
           measurementUnit:
-              _activeIngredientController.text.isNotEmpty
+              _dosageController.text.isNotEmpty
                   ? _measurementUnit
                   : null,
         );
 
         // Для реального додатку, тут має бути збереження у репозиторій
         // Наприклад:
-          final reminderRepo = ref.read(localReminderRepositoryProvider);
-          await reminderRepo.saveReminder(newReminder);
+        final reminderRepo = ref.read(localReminderRepositoryProvider);
+        await reminderRepo.saveReminder(newReminder);
 
         // Для цілей відладки виведемо інформацію
         log('Зберігаємо нагадування: ${newReminder.toJson()}');
@@ -287,7 +291,7 @@ class _AddEditMedicationScreenState
                       case ReminderFrequency.daily:
                         text = 'Щодня';
                         break;
-/*                       case ReminderFrequency.weekly:
+                      /*                       case ReminderFrequency.weekly:
                         text = 'Щотижня';
                         break;
                       case ReminderFrequency.monthly:
@@ -331,30 +335,15 @@ class _AddEditMedicationScreenState
               },
             ),
 
-            /*   const SizedBox(height: 16),
-
-            // Unit field
-            TextFormField(
-              controller: _unitController,
-              decoration: const InputDecoration(
-                labelText: 'Одиниця виміру порції',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Будь ласка, введіть одиницю виміру';
-                }
-                return null;
-              },
-            ),
- */
             const SizedBox(height: 16),
 
-            // Active ingredient amount
+            // Dosage field
+        
             TextFormField(
-              controller: _activeIngredientController,
+              controller: _dosageController,
               decoration: const InputDecoration(
                 labelText: 'Кількість діючої речовини',
+                hintText: 'Наприклад: 400 для 400 (одиниця виміру)',
                 border: OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(

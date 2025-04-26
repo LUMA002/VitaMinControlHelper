@@ -6,10 +6,14 @@ namespace api.DTOs.IntakeLog
     {
         [Required(ErrorMessage = "ID добавки обов'язковий")]
         public Guid SupplementID { get; set; }
-        // наразі трохи зайві поля, залишу із перспективою реалізації
-        [Required(ErrorMessage = "Кількість обов'язкова")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Кількість має бути більше 0")]
-        public double Quantity { get; set; }
+
+        [Required(ErrorMessage = "Кількість порцій обов'язкова")]
+        [Range(1, 100, ErrorMessage = "Кількість порцій має бути не менше 1")]
+        public int Quantity { get; set; } = 1; // Змінено тип на int з значенням за замовчуванням
+        
+        [Required(ErrorMessage = "Дозування обов'язкове")]
+        [Range(0.01, 100000000, ErrorMessage = "Дозування має бути більше 0")]
+        public double Dosage { get; set; } // Додано поле для дозування активної речовини
         
         [Required(ErrorMessage = "Одиниця виміру обов'язкова")]
         [StringLength(50, ErrorMessage = "Одиниця виміру має бути до {1} символів")]
@@ -17,4 +21,4 @@ namespace api.DTOs.IntakeLog
         
         public DateTime? TakenAt { get; set; }
     }
-} 
+}

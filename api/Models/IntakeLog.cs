@@ -12,7 +12,9 @@ namespace api.Models
         
         public Guid SupplementID { get; set; }
         
-        public double Quantity { get; set; }
+        public int Quantity { get; set; } = 1; // Змінено тип на int і додано значення за замовчуванням
+        
+        public double Dosage { get; set; } = 0; // Додане нове поле для дозування активної речовини
         
         [StringLength(50)]
         public string Unit { get; set; } = string.Empty;
@@ -26,4 +28,4 @@ namespace api.Models
         [ForeignKey("SupplementID")]
         public virtual Supplement Supplement { get; set; } = null!;
     }
-} 
+}

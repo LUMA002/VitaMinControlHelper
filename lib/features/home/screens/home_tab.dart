@@ -127,7 +127,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         await intakeRepo.addIntakeLog(
           reminder.supplementId,
           now,
-          dosage: reminder.quantity,
+          quantity: 1, // Кількість порцій (таблеток, капсул тощо)
+          dosage:
+              reminder.dosage ?? 0,
           unit: safeUnit,
         );
         log('Запис успішно додано в API');
@@ -298,8 +300,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       ),
                       subtitle: Text(
                         reminder.timeToTake != null
-                            ? '${reminder.quantity} ${reminder.unit} о ${reminder.timeToTake!.hour.toString().padLeft(2, '0')}:${reminder.timeToTake!.minute.toString().padLeft(2, '0')}'
-                            : '${reminder.quantity} ${reminder.unit} (час не вказано)',
+                            ? '${reminder.dosage ?? reminder.quantity} ${reminder.unit} о ${reminder.timeToTake!.hour.toString().padLeft(2, '0')}:${reminder.timeToTake!.minute.toString().padLeft(2, '0')}'
+                            : '${reminder.dosage ?? reminder.quantity} ${reminder.unit} (час не вказано)',
                       ),
                       trailing:
                           isCompleted

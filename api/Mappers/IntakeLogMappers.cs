@@ -24,6 +24,7 @@ namespace api.Mappers
                 UserID = intakeLog.UserID,
                 Supplement = intakeLog.Supplement.ToSupplementDto(),
                 Quantity = intakeLog.Quantity,
+                Dosage = intakeLog.Dosage, // Додано поле Dosage
                 Unit = intakeLog.Unit,
                 TakenAt = intakeLog.TakenAt
             };
@@ -37,9 +38,10 @@ namespace api.Mappers
                 UserID = userId,
                 SupplementID = createDto.SupplementID,
                 Quantity = createDto.Quantity,
+                Dosage = createDto.Dosage, // Додано поле Dosage
                 Unit = createDto.Unit,
                 TakenAt = createDto.TakenAt ?? DateTime.UtcNow
             };
         }
     }
-} 
+}

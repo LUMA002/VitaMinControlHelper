@@ -207,13 +207,15 @@ class ApiService {
     DateTime intakeTime, {
     double? dosage,
     String? unit,
+    int quantity = 1, // Додано параметр quantity зі значенням за замовчуванням
   }) async {
     try {
       final safeUnit = unit ?? 'шт';
 
       final Map<String, dynamic> data = {
         'supplementID': userSupplementId,
-        'quantity': dosage ?? 1.0,
+        'quantity': quantity, // Змінено з dosage на quantity з типом int
+        'dosage': dosage ?? 0.0, // Додано нове поле dosage
         'takenAt': intakeTime.toUtc().toIso8601String(),
         'unit': safeUnit,
       };
@@ -237,13 +239,7 @@ class ApiService {
       } else {
         // Якщо з якоїсь причини відповідь порожня, створюємо сумісний об'єкт
         log('Відповідь від сервера порожня або неправильного формату');
-        return {
-          /*           'id': '', // Сервер повинен генерувати ID
-          'userSupplementId': userSupplementId,
-          'intakeTime': intakeTime.toIso8601String(),
-          'dosage': dosage ?? 1.0,
-          'unit': safeUnit, */
-        };
+        return {};
       }
     } catch (e) {
       log('Error in addIntakeLog: $e');
