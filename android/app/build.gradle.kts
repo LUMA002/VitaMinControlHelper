@@ -6,14 +6,16 @@ plugins {
 }
 
 android {
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "29.0.13113456"
     namespace = "com.example.vita_min_control_helper"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // Додано підтримку десугарингу
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -38,6 +40,11 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+// Додайте залежність для десугарингу
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {
