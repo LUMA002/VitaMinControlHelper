@@ -83,15 +83,45 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
     switch (_selectedPeriod) {
       case 'Тиждень':
-        return startDate.add(const Duration(days: 6));
+        // Include the entire last day (23:59:59)
+        return DateTime(
+          startDate.year,
+          startDate.month,
+          startDate.day + 6,
+          23,
+          59,
+          59,
+          999,
+        );
       case 'Місяць':
-        // Last day of the current month
-        return DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
+        // Last day of the current month (also include full day)
+        final lastDay = DateTime(
+          _selectedDate.year,
+          _selectedDate.month + 1,
+          0,
+        );
+        return DateTime(
+          lastDay.year,
+          lastDay.month,
+          lastDay.day,
+          23,
+          59,
+          59,
+          999,
+        );
       case 'Рік':
-        // Last day of the current year
-        return DateTime(_selectedDate.year, 12, 31);
+        // Last day of the current year (also include full day)
+        return DateTime(_selectedDate.year, 12, 31, 23, 59, 59, 999);
       default:
-        return startDate.add(const Duration(days: 6));
+        return DateTime(
+          startDate.year,
+          startDate.month,
+          startDate.day + 6,
+          23,
+          59,
+          59,
+          999,
+        );
     }
   }
 
@@ -132,52 +162,41 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final startDate = _getStartDate();
     final endDate = _getEndDate();
 
-    // Filter by selected supplement if one is selected
-    final dailyCounts = await intakeRepo.getDailyIntakeCount(
-      startDate,
-      endDate,
-    );
 
-    // Якщо вибрано "Рік", групуємо дані по місяцях
-    if (_selectedPeriod == 'Рік') {
-      final Map<DateTime, int> monthlyCounts = {};
+  log('Date range for $_selectedPeriod: ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
+    // Always fetch fresh data first
+    final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
 
-      for (var entry in dailyCounts.entries) {
-        final monthDate = DateTime(
-          entry.key.year,
-          entry.key.month,
-          15,
-        ); // Середина місяця
-        monthlyCounts[monthDate] =
-            (monthlyCounts[monthDate] ?? 0) + entry.value;
+    // Group by day regardless of supplement selection
+    final Map<DateTime, int> counts = {};
+    for (var log in logs) {
+      // Only include selected supplement if one is selected
+      if (_selectedSupplementId != null &&
+          log.userSupplementId != _selectedSupplementId) {
+        continue;
       }
 
-      return monthlyCounts;
-    }
-    // If no supplement is selected, return all counts
-    if (_selectedSupplementId == null) {
-      return dailyCounts;
-    }
-
-    // Filter log entries by the selected supplement
-    final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
-    final filteredLogs =
-        logs
-            .where((log) => log.userSupplementId == _selectedSupplementId)
-            .toList();
-
-    final Map<DateTime, int> filteredCounts = {};
-    for (var log in filteredLogs) {
       final day = DateTime(
         log.intakeTime.year,
         log.intakeTime.month,
         log.intakeTime.day,
       );
 
-      filteredCounts[day] = (filteredCounts[day] ?? 0) + 1;
+      counts[day] = (counts[day] ?? 0) + 1;
     }
 
-    return filteredCounts;
+    // For year view, group by month
+    if (_selectedPeriod == 'Рік') {
+      final Map<DateTime, int> monthlyCounts = {};
+      for (var entry in counts.entries) {
+        final monthDate = DateTime(entry.key.year, entry.key.month, 15);
+        monthlyCounts[monthDate] =
+            (monthlyCounts[monthDate] ?? 0) + entry.value;
+      }
+      return monthlyCounts;
+    }
+
+    return counts;
   }
 
   // Modified to use the API repository with async methods

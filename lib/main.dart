@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/app/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,10 @@ import 'package:vita_min_control_helper/services/daily_reminder_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   // Initialize shared preferences
   final sharedPreferences = await SharedPreferences.getInstance();
   

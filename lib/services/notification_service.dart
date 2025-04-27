@@ -66,7 +66,18 @@ class NotificationService {
   }
 
   Future<void> _requestPermissions() async {
-    // Request permissions for iOS and macOS
+    // Додайте запит дозволу для Android 13+
+    final android =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    if (android != null) {
+      await android.requestNotificationsPermission();
+      log('Android notification permissions requested');
+    }
+
+    // Існуючі запити для iOS та macOS
     final iOS =
         flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
