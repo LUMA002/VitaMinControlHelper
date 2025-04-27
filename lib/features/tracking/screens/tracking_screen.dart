@@ -162,8 +162,9 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final startDate = _getStartDate();
     final endDate = _getEndDate();
 
-
-  log('Date range for $_selectedPeriod: ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
+    log(
+      'Date range for $_selectedPeriod: ${startDate.toIso8601String()} to ${endDate.toIso8601String()}',
+    );
     // Always fetch fresh data first
     final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
 
@@ -450,18 +451,18 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                                 return const SizedBox();
                               case 'Рік':
                                 final months = [
-                                  'С',
-                                  'Л',
-                                  'Б',
-                                  'К',
-                                  'Т',
-                                  'Ч',
-                                  'Л',
-                                  'С',
-                                  'В',
-                                  'Ж',
-                                  'Л',
-                                  'Г',
+                                  '1',
+                                  '2',
+                                  '3',
+                                  '4',
+                                  '5',
+                                  '6',
+                                  '7',
+                                  '8',
+                                  '9',
+                                  '10',
+                                  '11',
+                                  '12',
                                 ];
                                 if (date.day == 15) {
                                   // Show only middle of month
@@ -480,7 +481,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 30,
+                          reservedSize: 38,
                           getTitlesWidget: (value, meta) {
                             if (value == 0) {
                               return const SizedBox();
@@ -488,7 +489,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Text(value.toInt().toString()),
-                            );
+                             );
                           },
                         ),
                       ),
