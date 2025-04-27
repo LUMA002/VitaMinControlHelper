@@ -489,7 +489,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Text(value.toInt().toString()),
-                             );
+                            );
                           },
                         ),
                       ),
