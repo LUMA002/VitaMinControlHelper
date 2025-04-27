@@ -1,141 +1,196 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/data/models/knowledge_item.dart';
+import 'package:vita_min_control_helper/data/repositories/knowledge_repository.dart';
+import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_detail_screen.dart';
 
-class KnowledgeScreen extends ConsumerWidget {
+class KnowledgeScreen extends StatefulWidget {
   const KnowledgeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<KnowledgeScreen> createState() => _KnowledgeScreenState();
+}
+
+class _KnowledgeScreenState extends State<KnowledgeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late List<KnowledgeItem> _items;
+  String _selectedCategory = 'all';
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_handleTabChange);
+
+    // Отримуємо дані
+    _items = KnowledgeRepository.getMockItems();
+  }
+
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) return;
+
+    setState(() {
+      switch (_tabController.index) {
+        case 0:
+          _selectedCategory = 'all';
+          break;
+        case 1:
+          _selectedCategory = 'vitamin';
+          break;
+        case 2:
+          _selectedCategory = 'mineral';
+          break;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Mock data for knowledge items
-    final knowledgeItems = [
-      KnowledgeItem(
-        id: '1',
-        title: 'Вітамін D',
-        description:
-            'Вітамін D відіграє важливу роль у засвоєнні кальцію та фосфору, сприяє зміцненню кісток і зубів. Також впливає на імунну систему та перешкоджає розвитку аутоімунних захворювань.',
-        recommendedDosage: '600-800 МО на день для дорослих',
-        deficiencySymptoms:
-            'Біль у кістках, м\'язова слабкість, підвищена втомлюваність',
-        overdoseSymptoms: 'Нудота, блювота, підвищення рівня кальцію в крові',
-        icon: Icons.wb_sunny_outlined,
-      ),
-      KnowledgeItem(
-        id: '2',
-        title: 'Вітамін C',
-        description:
-            'Вітамін C є потужним антиоксидантом, сприяє зміцненню імунної системи, покращує всмоктування заліза з їжі, сприяє утворенню колагену, який потрібен для здоров\'я шкіри, сухожиль і кровоносних судин.',
-        recommendedDosage: '75-90 мг на день для дорослих',
-        deficiencySymptoms:
-            'Кровоточивість ясен, повільне загоєння ран, сухість шкіри',
-        overdoseSymptoms: 'Діарея, нудота, судоми в животі',
-        icon: Icons.sanitizer_outlined,
-      ),
-      KnowledgeItem(
-        id: '3',
-        title: 'Цинк',
-        description:
-            'Цинк є важливим мінералом, який бере участь у багатьох біохімічних процесах організму. Він необхідний для нормального функціонування імунної системи, загоєння ран, синтезу ДНК та підтримки нормального відчуття смаку та запаху.',
-        recommendedDosage: '8-11 мг на день для дорослих',
-        deficiencySymptoms: 'Випадіння волосся, діарея, затримка росту у дітей',
-        overdoseSymptoms: 'Нудота, біль у животі, головний біль',
-        icon: Icons.ac_unit_outlined,
-      ),
-      KnowledgeItem(
-        id: '4',
-        title: 'Кальцій',
-        description:
-            'Кальцій - це мінерал, необхідний для формування і зміцнення кісток і зубів. Він також регулює м\'язові скорочення, включаючи серцебиття, і забезпечує правильне функціонування нервової системи.',
-        recommendedDosage: '1000-1200 мг на день для дорослих',
-        deficiencySymptoms:
-            'Остеопороз, м\'язові судоми, підвищений ризик переломів',
-        overdoseSymptoms: 'Камені в нирках, закрепи, проблеми з серцем',
-        icon: Icons.fitness_center_outlined,
-      ),
-    ];
+    return Column(
+      children: [
+        // Вкладки для категорій
+        TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Всі'),
+            Tab(text: 'Вітаміни'),
+            Tab(text: 'Мінерали'),
+          ],
+          labelColor: theme.colorScheme.primary,
+        ),
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-           
-      itemCount: knowledgeItems.length,
-      itemBuilder: (context, index) {
-        final item = knowledgeItems[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16.0),
-          child: ExpansionTile(
-            leading: Icon(
-              item.icon,
-              color: theme.colorScheme.primary,
-              size: 32,
-            ),
-            title: Text(item.title, style: theme.textTheme.titleLarge),
+        // Основний контент з підтримкою свайпів
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.description, style: theme.textTheme.bodyLarge),
-                    const SizedBox(height: 16),
-                    _buildInfoSection(
-                      context,
-                      'Рекомендоване дозування:',
-                      item.recommendedDosage,
-                      Icons.medication_outlined,
-                    ),
-                    _buildInfoSection(
-                      context,
-                      'Симптоми дефіциту:',
-                      item.deficiencySymptoms,
-                      Icons.sick_outlined,
-                    ),
-                    _buildInfoSection(
-                      context,
-                      'Симптоми передозування:',
-                      item.overdoseSymptoms,
-                      Icons.warning_amber_outlined,
-                    ),
-                  ],
-                ),
-              ),
+              _buildGrid(_items), // Всі
+              _buildGrid(
+                _items.where((item) => item.category == 'vitamin').toList(),
+              ), // Вітаміни
+              _buildGrid(
+                _items.where((item) => item.category == 'mineral').toList(),
+              ), // Мінерали
             ],
           ),
-        );
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGrid(List<KnowledgeItem> items) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _buildItemCard(context, item);
       },
     );
   }
 
-  Widget _buildInfoSection(
-    BuildContext context,
-    String title,
-    String content,
-    IconData icon,
-  ) {
+  Widget _buildItemCard(BuildContext context, KnowledgeItem item) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: theme.colorScheme.secondary),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
+    // Визначаємо колір для категорії
+    Color cardColor =
+        item.category == 'vitamin'
+            ? Colors.green.withValues(alpha: 0.200)
+            : Colors.blue.withValues(alpha: 0.200);
+
+    Color iconColor =
+        item.category == 'vitamin'
+            ? const Color.fromARGB(255, 10, 135, 17)
+            : const Color.fromARGB(255, 19, 136, 231);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: cardColor,
+      child: InkWell(
+        onTap: () => _openDetailScreen(context, item),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Іконка у верхній частині картки
+            Expanded(
+              flex: 4,
+              child: Container(
+                color: theme.colorScheme.surfaceContainerLowest,
+                child: Center(
+                  child: Icon(item.icon, size: 56, color: iconColor),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(content, style: theme.textTheme.bodyMedium),
-        ],
+            ),
+
+            // Інформація у нижній частині картки
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 6, top: 6, right: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    //const SizedBox(height: 2),
+                    Text(
+                      item.description,
+                      style: theme.textTheme.bodySmall,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Індикатор категорії у нижній частині картки
+            Container(
+              color: iconColor.withValues(alpha: 0.180),
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                item.category == 'vitamin' ? 'Вітамін' : 'Мінерал',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openDetailScreen(BuildContext context, KnowledgeItem item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => KnowledgeDetailScreen(item: item),
       ),
     );
   }

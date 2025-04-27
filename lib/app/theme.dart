@@ -13,7 +13,6 @@ class AppTheme {
     secondary: _lightSecondary,
     brightness: Brightness.light,
     tertiary: Colors.black26,
-    // Replace deprecated properties
     surface: const Color(0xFFF0F5F1), // Light mint background
     onSurface: const Color(0xFF2C3E50),
     surfaceContainerHighest: const Color(0xFFE0EBE2),
@@ -30,7 +29,6 @@ class AppTheme {
     onSecondary: Colors.black,
     error: Colors.redAccent,
     onError: Colors.black,
-    // Replace deprecated properties
     surface: const Color(0xFF121212),
     onSurface: Colors.white,
     surfaceContainerHighest: const Color(0xFF2D2D2D),
@@ -44,6 +42,7 @@ class AppTheme {
     scaffoldBackgroundColor: const Color(
       0xFFF0F5F1,
     ), // Slightly more muted background
+  
     textTheme: _baseTextTheme.apply(
       bodyColor: const Color(0xFF2C3E50),
       displayColor: const Color(0xFF2C3E50),

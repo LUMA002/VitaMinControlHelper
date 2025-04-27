@@ -8,6 +8,8 @@ class KnowledgeItem {
   final String deficiencySymptoms;
   final String overdoseSymptoms;
   final IconData icon;
+  final String category; // 'vitamin' або 'mineral'
+  final List<String> foodSources;
 
   KnowledgeItem({
     required this.id,
@@ -17,5 +19,7 @@ class KnowledgeItem {
     required this.deficiencySymptoms,
     required this.overdoseSymptoms,
     required this.icon,
+    required this.category,
+    this.foodSources = const [],
   });
-} 
+}
