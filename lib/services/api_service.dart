@@ -12,17 +12,34 @@ class ApiService {
 
   // Make baseUrl accessible via a getter
   String get baseUrl {
+    // Перевірка чи це емулятор (для Android)
+    bool isEmulator = false;
+    if (Platform.isAndroid) {
+      isEmulator =
+          Platform.operatingSystem == "android" &&
+          Platform.environment.containsKey('ANDROID_EMU');
+    }
+
     if (Platform.isWindows) {
       return 'http://localhost:5241/api';
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      return 'http://10.0.2.2:5241/api'; // для Android емулятора, айос під питанням
+    } else if (Platform.isAndroid) {
+      if (isEmulator) {
+        return 'http://10.0.2.2:5241/api'; // Для Android емулятора
+      } else {
+        return 'http://192.168.0.100:5241/api'; // Замініть на свою IP-адресу в локальній мережі
+      }
+    } else if (Platform.isIOS) {
+      // Для iOS симулятора та фізичних пристроїв
+      return 'http://192.168.0.104:5241/api'; // Замініть на свою IP-адресу в локальній мережі
     } /* else if (kIsWeb) {
       return 'http://localhost:5241/api';/*  веб теж під питанням через безпеку 
       (наразі проблема із використанням package fluttersecurestorage, не 
-      підтримується поки для вебу) */
+      підтримується поки для вебу і поки виглядає зайвим) */
     } */
     return 'http://localhost:5241/api'; // За замовчуванням
   }
+
+
 
   ApiService(this._ref) : _dio = Dio() {
     _dio.interceptors.add(

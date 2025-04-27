@@ -10,6 +10,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// код для прослуховування на всіх IP-адресах, додав, щоб змогти отримати доступ
+// до API з інших пристроїв у локальній мережі
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5241); 
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 
