@@ -13,6 +13,7 @@ class AuthState {
     this.tokenExpiration,
     this.isLoggedIn = false,
     this.isGuest = false,
+    this.isLoading = true, // Defaulted to true during initialization
   });
 
   final String? userId;
@@ -22,6 +23,7 @@ class AuthState {
   final DateTime? tokenExpiration;
   final bool isLoggedIn;
   final bool isGuest;
+  final bool isLoading;
 
   AuthState copyWith({
     String? userId,
@@ -31,6 +33,7 @@ class AuthState {
     DateTime? tokenExpiration,
     bool? isLoggedIn,
     bool? isGuest,
+    bool? isLoading,
   }) {
     return AuthState(
       userId: userId ?? this.userId,
@@ -40,6 +43,7 @@ class AuthState {
       tokenExpiration: tokenExpiration ?? this.tokenExpiration,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       isGuest: isGuest ?? this.isGuest,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
@@ -70,14 +74,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
             token: token,
             tokenExpiration: expiration,
             isLoggedIn: true,
+            isLoading: false,
           );
         } else {
           // Token expired, clean up
           await logout();
         }
+      } else {
+        state = state.copyWith(isLoading: false);
       }
     } catch (e) {
       log('Error initializing auth: $e');
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -95,6 +103,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       token: token,
       tokenExpiration: tokenExpiration,
       isLoggedIn: true,
+      isLoading: false,
     );
 
     // Store in secure storage
@@ -114,11 +123,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       userId: 'guest-${DateTime.now().millisecondsSinceEpoch}',
       username: 'Guest',
       isGuest: true,
+      isLoading: false,
     );
   }
 
   Future<void> logout() async {
-    state = AuthState();
+    state = AuthState(isLoading: false);
 
     // Clear storage
     await _storage.delete(key: 'token');

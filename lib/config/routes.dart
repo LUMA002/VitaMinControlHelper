@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vita_min_control_helper/features/auth/providers/auth_provider.dart';
@@ -11,42 +12,58 @@ import 'package:vita_min_control_helper/features/tracking/screens/tracking_scree
 import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_screen.dart';
 import 'package:vita_min_control_helper/features/course/screens/add_edit_medication_screen.dart';
 import 'package:vita_min_control_helper/data/models/reminder.dart';
+import 'package:vita_min_control_helper/features/auth/screens/splash_screen.dart';                      
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-// Router provider
+// Провайдер для відкладеного роутера
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final authStateProvider = ref.watch(authProvider.notifier);
 
+  // Використовуємо refreshListenable для оновлення маршрутизатора при зміні автентифікації
   return GoRouter(
-    initialLocation: '/home',
+    refreshListenable: GoRouterRefreshStream(authStateProvider.stream),
+    initialLocation: '/', // Змінюємо на проміжний маршрут
     navigatorKey: _rootNavigatorKey,
-    debugLogDiagnostics: true, // Додаємо логування для налагодження
+    debugLogDiagnostics: true,
     redirect: (context, state) {
-      final isLoggedIn = authState.isLoggedIn;
-      final isGuest = authState.isGuest;
+      final isLoggedIn = ref.read(authProvider).isLoggedIn;
+      final isGuest = ref.read(authProvider).isGuest;
+      final isLoading = ref.read(authProvider).isLoading;
+
+      // Проміжний шлях для визначення перенаправлення
+      final isInitialRoute = state.matchedLocation == '/';
+
       final isGoingToAuth =
           state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
-      // Not logged in and not a guest, redirect to login
+      // Під час завантаження показуємо SplashScreen
+      if (isLoading && isInitialRoute) {
+        return null; // Залишаємося на '/', який буде показувати SplashScreen
+      }
+
+      // Після завантаження - визначаємо правильний маршрут
+      if (isInitialRoute) {
+        // Якщо користувач авторизований або гість, перенаправляємо на головну/знання
+        if (isLoggedIn) return '/home';
+        if (isGuest) return '/knowledge';
+        // Інакше на логін
+        return '/login';
+      }
+
+      // Неавторизовані користувачі - тільки на логін чи реєстрацію
       if (!isLoggedIn && !isGuest && !isGoingToAuth) {
         return '/login';
       }
 
-      // Logged in or guest, prevent access to auth pages
-      /*       if ((isLoggedIn || isGuest) && isGoingToAuth) {
-        return '/home';
-      }
- */
-
+      // Авторизованим користувачам не показуємо логін/реєстрацію
       if (isLoggedIn && isGoingToAuth) {
         return '/home';
       }
 
-      // Guest users can only access knowledge and login section
-      //redirection bug fixed
+      // Гості можуть бачити тільки розділ знань та сторінки авторизації
       if (isGuest &&
           state.matchedLocation != '/knowledge' &&
           state.matchedLocation != '/login' &&
@@ -55,9 +72,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/knowledge';
       }
 
-      return null;
+      return null; // Немає перенаправлення
     },
     routes: [
+      // Проміжний маршрут для SplashScreen
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+
       // Auth routes
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
@@ -133,3 +153,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
   );
 });
+
+
+// Допоміжний клас для оновлення маршрутизатора при зміні стану автентифікації
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+      (dynamic _) => notifyListeners(),
+    );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
