@@ -102,14 +102,16 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final dayCount = endDate.difference(startDate).inDays + 1;
 
     // Обмежуємо кількість дат для відображення при виборі "Рік"
-  if (_selectedPeriod == 'Рік') {
-    // Групуємо по місяцях замість днів
-    List<DateTime> monthDates = [];
-    for (int month = 1; month <= 12; month++) {
-      monthDates.add(DateTime(_selectedDate.year, month, 15)); // Середина кожного місяця
+    if (_selectedPeriod == 'Рік') {
+      // Групуємо по місяцях замість днів
+      List<DateTime> monthDates = [];
+      for (int month = 1; month <= 12; month++) {
+        monthDates.add(
+          DateTime(_selectedDate.year, month, 15),
+        ); // Середина кожного місяця
+      }
+      return monthDates;
     }
-    return monthDates;
-  }
     return List.generate(
       dayCount,
       (index) => startDate.add(Duration(days: index)),
@@ -136,17 +138,22 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
       endDate,
     );
 
-  // Якщо вибрано "Рік", групуємо дані по місяцях
-  if (_selectedPeriod == 'Рік') {
-    final Map<DateTime, int> monthlyCounts = {};
-    
-    for (var entry in dailyCounts.entries) {
-      final monthDate = DateTime(entry.key.year, entry.key.month, 15); // Середина місяця
-      monthlyCounts[monthDate] = (monthlyCounts[monthDate] ?? 0) + entry.value;
+    // Якщо вибрано "Рік", групуємо дані по місяцях
+    if (_selectedPeriod == 'Рік') {
+      final Map<DateTime, int> monthlyCounts = {};
+
+      for (var entry in dailyCounts.entries) {
+        final monthDate = DateTime(
+          entry.key.year,
+          entry.key.month,
+          15,
+        ); // Середина місяця
+        monthlyCounts[monthDate] =
+            (monthlyCounts[monthDate] ?? 0) + entry.value;
+      }
+
+      return monthlyCounts;
     }
-    
-    return monthlyCounts;
-  }
     // If no supplement is selected, return all counts
     if (_selectedSupplementId == null) {
       return dailyCounts;
@@ -228,7 +235,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final colors = [
       theme.colorScheme.primary,
       theme.colorScheme.secondary,
-      theme.colorScheme.tertiary,
+      theme.colorScheme.tertiaryContainer,
       Colors.amber,
       Colors.green,
       Colors.purple,
@@ -533,7 +540,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                 final colors = [
                   theme.colorScheme.primary,
                   theme.colorScheme.secondary,
-                  theme.colorScheme.tertiary,
+                  theme.colorScheme.tertiaryContainer,
                   Colors.amber,
                   Colors.green,
                   Colors.purple,
@@ -689,7 +696,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
             value: supplement.id,
             child: Text(supplement.name),
           );
-        })//.toList(),
+        }), //.toList(),
       ],
       onChanged: (value) {
         setState(() {
@@ -709,6 +716,9 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedContainer(
       duration: PieChart.defaultDuration,
       width: size,
@@ -717,13 +727,6 @@ class _Badge extends StatelessWidget {
         color: Colors.white,
         shape: BoxShape.circle,
         border: Border.all(color: borderColor, width: 2),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .5),
-            offset: const Offset(3, 3),
-            blurRadius: 3,
-          ),
-        ],
       ),
       child: Center(
         child: FittedBox(
@@ -731,11 +734,13 @@ class _Badge extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Text(
-              // Збільшуємо кількість символів для відображення
               text.length > 10 ? text.substring(0, 10) : text,
               style: TextStyle(
-                fontSize: size * 0.28, // Пропорційний розмір шрифту
+                fontSize: size * 0.28,
                 fontWeight: FontWeight.bold,
+                color:
+                    Colors
+                        .black87, // Always use dark text on white background for readability
               ),
               textAlign: TextAlign.center,
             ),
