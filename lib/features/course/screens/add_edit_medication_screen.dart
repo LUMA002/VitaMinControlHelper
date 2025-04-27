@@ -248,6 +248,7 @@ class _AddEditMedicationScreenState
                     border: OutlineInputBorder(),
                   ),
                   value: _selectedSupplementId,
+                  menuMaxHeight: 300,
                   items:
                       _supplements.map((supplement) {
                         return DropdownMenuItem<String>(
