@@ -549,7 +549,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                       child: PieChart(
                         PieChartData(
                           sections: _getPieSections(context, supplementCounts),
-                          centerSpaceRadius: 40,
+                          centerSpaceRadius: 20,
                           sectionsSpace: 0,
                           pieTouchData: PieTouchData(
                             touchCallback:

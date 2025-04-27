@@ -1,6 +1,4 @@
-
 // This file contains global constants used throughout the application
-
 
 // !!!!! Make a refuctor to use the constants in the app !!!!!
 
@@ -19,12 +17,16 @@
 }
  */
 // Storage constants
+/// Storage keys used in the app
 class StorageKeys {
-  static const String userSupplements = 'user_supplements';
-  static const String supplements = 'supplements';
-  static const String supplementTypes = 'supplement_types';
-  static const String intakeLogs = 'intake_logs';
+  /// Key for storing reminders
   static const String reminders = 'reminders';
+
+  /// Key for storing user preferences
+  static const String userPreferences = 'user_preferences';
+
+  /// Key for storing last day check
+  static const String lastDayCheck = 'last_day_check';
 }
 /* 
 // Error messages

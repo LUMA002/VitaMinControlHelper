@@ -57,6 +57,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Future<void> _loadLocalReminders() async {
     try {
       final localReminderRepo = ref.read(localReminderRepositoryProvider);
+
+      // Get all reminders and filter today's reminders
       final reminders = localReminderRepo.getReminders();
 
       setState(() {
@@ -111,14 +113,17 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Future<void> _markAsTaken(Reminder reminder) async {
     try {
+      log('Marking reminder ${reminder.id} as taken');
+
       final localReminderRepo = ref.read(localReminderRepositoryProvider);
       final intakeRepo = ref.read(intakeRepositoryProvider);
 
-      // Mark reminder as taken locally
+      // Mark reminder as taken locally (this also cancels the notification)
       await localReminderRepo.markReminderAsTaken(reminder.id);
 
       // Переконуємося, що unit не буде null
       final safeUnit = reminder.unit;
+      final supplementName = _getSupplementName(reminder.supplementId);
 
       // Create an intake log and send directly to API
       final now = DateTime.now();
@@ -127,39 +132,35 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         await intakeRepo.addIntakeLog(
           reminder.supplementId,
           now,
-          quantity: 1, // Кількість порцій (таблеток, капсул тощо)
-          dosage:
-              reminder.dosage ?? 0,
+          quantity:
+              reminder.quantity, // Use the actual quantity from the reminder
+          dosage: reminder.dosage ?? 0,
           unit: safeUnit,
         );
-        log('Запис успішно додано в API');
+        log(
+          'Intake log successfully added to API for supplement: $supplementName',
+        );
       } catch (e) {
-        log('Помилка при збереженні в API: $e');
+        log('Error saving intake log to API: $e');
         // We'll just show the error but continue with UI updates
       }
 
       // Update the UI
-      setState(() {
-        _reminders = localReminderRepo.getReminders();
-        _filterTodayReminders();
-      });
-
-      // Also update the provider
-      ref.read(localRemindersProvider.notifier).state = _reminders;
+      await _loadLocalReminders();
 
       // After all the async operations
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              '${_getSupplementName(reminder.supplementId)} відмічено як прийнятий',
-            ),
+            content: Text('$supplementName відмічено як прийнятий'),
             duration: const Duration(seconds: 2),
           ),
         );
       }
     } catch (e) {
       // Тут обробляємо тільки критичні помилки, які перешкоджають роботі
+      log('Critical error marking reminder as taken: $e');
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -172,58 +173,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   /* void _showAddSingleIntakeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Додати одноразовий прийом'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Препарат',
-                border: OutlineInputBorder(),
-              ),
-              items: _supplements.map((supplement) {
-                return DropdownMenuItem<String>(
-                  value: supplement.id,
-                  child: Text(supplement.name),
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                // Would be handled in a real app
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Кількість',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Скасувати'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Прийом додано'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-            child: const Text('Додати'),
-          ),
-        ],
-      ),
-    );
+    // ...existing code...
   } */
 
   @override
@@ -268,6 +218,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             itemBuilder: (context, index) {
               final reminder = _todayReminders[index];
               final isCompleted = reminder.isConfirmed;
+              final supplementName = _getSupplementName(reminder.supplementId);
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -292,7 +243,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                         ),
                       ),
                       title: Text(
-                        _getSupplementName(reminder.supplementId),
+                        supplementName,
                         style: TextStyle(
                           decoration:
                               isCompleted ? TextDecoration.lineThrough : null,
@@ -312,6 +263,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                               : IconButton(
                                 icon: const Icon(Icons.check_circle_outline),
                                 onPressed: () => _markAsTaken(reminder),
+                                tooltip: 'Позначити як прийнятий',
                               ),
                     ),
                   ],
