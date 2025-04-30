@@ -39,8 +39,6 @@ class ApiService {
     return 'http://localhost:5241/api'; // За замовчуванням
   }
 
-
-
   ApiService(this._ref) : _dio = Dio() {
     _dio.interceptors.add(
       InterceptorsWrapper(

@@ -165,6 +165,12 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     log(
       'Date range for $_selectedPeriod: ${startDate.toIso8601String()} to ${endDate.toIso8601String()}',
     );
+
+      final now = DateTime.now();
+  if (startDate.isAfter(now)) {
+    log('Попередження: запитаний діапазон дат у майбутньому!');
+    // Можливо, перенаправте запит на поточний тиждень
+  }
     // Always fetch fresh data first
     final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
 
