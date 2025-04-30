@@ -1,0 +1,29 @@
+﻿services:
+  postgres_db:
+    image: postgres:16
+    container_name: vitamins_db
+    restart: always
+    environment:
+      POSTGRES_DB: VitaminsApp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: VitaminsPassword2024
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    image: vitamins-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres_db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "5200:5241"
+
+volumes:
+  pgdata:
