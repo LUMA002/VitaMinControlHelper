@@ -100,7 +100,9 @@ class ApiService {
       };
 
       if (dateOfBirth != null) {
-        data['dateOfBirth'] = dateOfBirth.toIso8601String();
+        final dateString = dateOfBirth.toUtc().toIso8601String();
+        data['dateOfBirth'] = dateString;
+        log('Відправляємо дату народження: $dateString');
       }
 
       if (gender != null) {
@@ -123,6 +125,9 @@ class ApiService {
       return null;
     } on DioException catch (e) {
       log('Register error: ${e.message}');
+      if (e.response != null) {
+        log('Server response: ${e.response?.data}');
+      }
       return null;
     }
   }
