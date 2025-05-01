@@ -26,7 +26,7 @@ class ApiService {
       if (isEmulator) {
         return 'http://10.0.2.2:5241/api'; // Для Android емулятора
       } else {
-        return 'http://192.168.0.100:5241/api'; // Замініть на свою IP-адресу в локальній мережі
+        return 'http://192.168.0.102:5241/api'; // Замініть на свою IP-адресу в локальній мережі
       }
     } else if (Platform.isIOS) {
       // Для iOS симулятора та фізичних пристроїв
