@@ -19,6 +19,18 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
   bool _isLoading = true;
   String? _error;
 
+  // Dynamucally calculate the Y-axis interval based on the maximum value helper
+  double _calculateYAxisInterval(double maxValue) {
+    if (maxValue <= 10) return 1;
+    if (maxValue <= 20) return 2;
+    if (maxValue <= 50) return 5;
+    if (maxValue <= 100) return 10;
+    if (maxValue <= 200) return 20;
+    if (maxValue <= 500) return 50;
+    if (maxValue <= 1000) return 100;
+    return 250;
+  }
+
   final List<String> _periods = ['Тиждень', 'Місяць', 'Рік'];
   String _selectedPeriod = 'Тиждень';
   final DateTime _selectedDate = DateTime.now();
@@ -166,11 +178,11 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
       'Date range for $_selectedPeriod: ${startDate.toIso8601String()} to ${endDate.toIso8601String()}',
     );
 
-      final now = DateTime.now();
-  if (startDate.isAfter(now)) {
-    log('Попередження: запитаний діапазон дат у майбутньому!');
-    // Можливо, перенаправте запит на поточний тиждень
-  }
+    final now = DateTime.now();
+    if (startDate.isAfter(now)) {
+      log('Попередження: запитаний діапазон дат у майбутньому!');
+      // Можливо, перенаправте запит на поточний тиждень
+    }
     // Always fetch fresh data first
     final logs = await intakeRepo.getIntakeLogsForDateRange(startDate, endDate);
 
@@ -488,10 +500,32 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 38,
+                          // Dynamic interval calculation based on maximum value
+                          interval: _calculateYAxisInterval(
+                            barGroups.fold(0.0, (max, group) {
+                              final groupMax = group.barRods.fold(
+                                0.0,
+                                (max, rod) => rod.toY > max ? rod.toY : max,
+                              );
+                              return groupMax > max ? groupMax : max;
+                            }),
+                          ),
                           getTitlesWidget: (value, meta) {
-                            if (value == 0) {
+                            // Only show values that are divisible by the interval
+                            final interval = _calculateYAxisInterval(
+                              barGroups.fold(0.0, (max, group) {
+                                final groupMax = group.barRods.fold(
+                                  0.0,
+                                  (max, rod) => rod.toY > max ? rod.toY : max,
+                                );
+                                return groupMax > max ? groupMax : max;
+                              }),
+                            );
+
+                            if (value == 0 || value % interval != 0) {
                               return const SizedBox();
                             }
+
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Text(value.toInt().toString()),

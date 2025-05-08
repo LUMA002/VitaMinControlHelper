@@ -122,18 +122,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // Medication screens (outside the shell)
-      GoRoute(
-        path: '/add-medication',
-        builder: (context, state) => const AddEditMedicationScreen(),
-      ),
-      GoRoute(
-        path: '/edit-medication',
-        builder: (context, state) {
-          final reminder = state.extra as Reminder?;
-          return AddEditMedicationScreen(reminder: reminder);
-        },
-      ),
+      // // Medication screens (outside the shell)
+      // GoRoute(
+      //   path: '/add-medication',
+      //   builder: (context, state) => const AddEditMedicationScreen(),
+      // ),
+      // GoRoute(
+      //   path: '/edit-medication',
+      //   builder: (context, state) {
+      //     final reminder = state.extra as Reminder?;
+      //     return AddEditMedicationScreen(reminder: reminder);
+      //   },
+      // ),
     ],
     errorBuilder:
         (context, state) => Scaffold(
