@@ -42,7 +42,7 @@ class AppTheme {
     scaffoldBackgroundColor: const Color(
       0xFFF0F5F1,
     ), // Slightly more muted background
-  
+
     textTheme: _baseTextTheme.apply(
       bodyColor: const Color(0xFF2C3E50),
       displayColor: const Color(0xFF2C3E50),
@@ -54,7 +54,7 @@ class AppTheme {
       centerTitle: true,
       iconTheme: IconThemeData(color: _lightPrimary),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -111,7 +111,7 @@ class AppTheme {
       centerTitle: true,
       iconTheme: IconThemeData(color: _darkPrimary),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: const Color(0xFF2D2D2D),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
