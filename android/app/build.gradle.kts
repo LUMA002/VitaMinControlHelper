@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    ndkVersion = "29.0.13113456"
+    ndkVersion = "27.0.12077973"
     namespace = "com.example.vita_min_control_helper"
     compileSdk = flutter.compileSdkVersion
     //ndkVersion = flutter.ndkVersion

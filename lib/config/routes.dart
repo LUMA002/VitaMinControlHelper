@@ -10,8 +10,6 @@ import 'package:vita_min_control_helper/features/home/screens/home_tab.dart';
 import 'package:vita_min_control_helper/features/course/screens/course_screen.dart';
 import 'package:vita_min_control_helper/features/tracking/screens/tracking_screen.dart';
 import 'package:vita_min_control_helper/features/knowledge/screens/knowledge_screen.dart';
-import 'package:vita_min_control_helper/features/course/screens/add_edit_medication_screen.dart';
-import 'package:vita_min_control_helper/data/models/reminder.dart';
 import 'package:vita_min_control_helper/features/auth/screens/splash_screen.dart';                      
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();

@@ -22,12 +22,6 @@ D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\ap
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets.build.json
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets.development.json
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets\msbuild.api.Microsoft.AspNetCore.StaticWebAssets.props
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets\msbuild.api.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets\msbuild.build.api.props
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.api.props
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.api.props
-D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets.pack.json
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\api.csproj.Up2Date
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\api.dll
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\refint\api.dll
@@ -115,3 +109,9 @@ D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\ap
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Hot_ACCESS\Study\Projects\Flutter\CourseProjectApp\vita_min_control_helper\api\obj\Debug\net8.0\swae.build.ex.cache
